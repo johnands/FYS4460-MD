@@ -10,6 +10,8 @@
 #include <iostream>
 
 using namespace std;
+using std::cout;
+using std::endl;
 
 int main(int numberOfArguments, char **argumentList)
 {
@@ -24,6 +26,9 @@ int main(int numberOfArguments, char **argumentList)
     // If a third argument is provided, it is the lattice constant determining the density (measured in angstroms)
     if(numberOfArguments > 3) initialTemperature = UnitConverter::lengthFromAngstroms(atof(argumentList[3]));
 
+    double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
+    cout << mass << endl << initialTemperature << endl;
+
     double dt = UnitConverter::timeFromSI(1e-15); // Measured in seconds
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
@@ -33,9 +38,9 @@ int main(int numberOfArguments, char **argumentList)
     cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K" << endl;
 
     System system;
-    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature);
+    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass);
     system.setPotential(new LennardJones(1.0, 1.0)); // You must insert correct parameters here
-    system.setIntegrator(new EulerCromer());
+    system.setIntegrator(new VelocityVerlet());
     system.removeTotalMomentum();
 
     StatisticsSampler statisticsSampler;
@@ -43,7 +48,7 @@ int main(int numberOfArguments, char **argumentList)
     movie.open("movie.xyz");
 
     cout << "Timestep Time Temperature KineticEnergy PotentialEnergy TotalEnergy" << endl;
-    for(int timestep=0; timestep<1000; timestep++) {
+    for(int timestep=0; timestep<3000; timestep++) {
         system.step(dt);
         statisticsSampler.sample(system);
         if( !(timestep % 100) ) {

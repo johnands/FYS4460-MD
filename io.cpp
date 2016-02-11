@@ -36,7 +36,8 @@ void IO::saveState(System *system)
         file << system->atoms().size() << endl;
         file << "The is an optional comment line that can be empty." << endl;
         for(Atom *atom : system->atoms()) {
-            file << "Ar " << UnitConverter::lengthToAngstroms(atom->position.x()) << " " << UnitConverter::lengthToAngstroms(atom->position.y()) << " " << UnitConverter::lengthToAngstroms(atom->position.z()) << endl;
+            file << "Ar " << UnitConverter::lengthToAngstroms(atom->position.x()) << " " << UnitConverter::lengthToAngstroms(atom->position.y()) << " " << UnitConverter::lengthToAngstroms(atom->position.z()) << " "
+                          << atom->velocity.x() << " " << atom->velocity.y() << " " << atom->velocity.z() <<  endl;
         }
     }
 }

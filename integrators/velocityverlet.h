@@ -6,6 +6,7 @@ class VelocityVerlet : public Integrator
 {
 public:
     VelocityVerlet() { }
+    ~VelocityVerlet() { }
     virtual void integrate(System *system, double dt) override;
 };
 #endif

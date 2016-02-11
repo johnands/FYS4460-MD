@@ -15,17 +15,19 @@ private:
     Potential* m_potential = nullptr;
     Integrator* m_integrator = nullptr;
     double m_time = 0;
-    int m_steps = 0;
+
 
 public:
     System();
     ~System();
     void resetForcesOnAllAtoms();
-    void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature);
+    void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass);
     void applyPeriodicBoundaryConditions();
     void removeTotalMomentum();
     void calculateForces();
     void step(double dt);
+
+    int m_steps = 0;
 
     // Setters and getters
     vector<Atom *>& atoms() { return m_atoms; } // Returns a reference to the std::vector of atom pointers
