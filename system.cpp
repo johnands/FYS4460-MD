@@ -111,6 +111,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
 void System::calculateForces() {
     resetForcesOnAllAtoms();
+    m_potential->setPotentialEnergy(0.0);
     m_potential->calculateForces(this);
 }
 
