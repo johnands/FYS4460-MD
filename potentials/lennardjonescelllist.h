@@ -20,5 +20,6 @@ public:
     // setters and getters
     CellList *celllist() { return m_cellList; }
     void setCellList(CellList *celllist) { m_cellList = celllist; }
+};
 
 #endif
