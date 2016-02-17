@@ -5,7 +5,8 @@
 using std::cout;
 using std::endl;
 
-LennardJones::LennardJones(double sigma, double epsilon) :
+LennardJones::LennardJones(System &system, double sigma, double epsilon) :
+    Potential (system),
     m_sigma(sigma),
     m_epsilon(epsilon),
     m_sigma6(pow(sigma, 6))
@@ -27,19 +28,19 @@ void LennardJones::calculateForces(System *system)
             dr = system->atoms()[i]->position - system->atoms()[j]->position;
 
             // make sure we're using shortest distance component-wise (periodic boundary conditions)
-            if (dr.x() >  system->systemSize().x() / 2) { dr[0] -= system->systemSize().x(); }
-            if (dr.x() < -system->systemSize().x() / 2) { dr[0] += system->systemSize().x(); }
+            if (dr.x() >  system->systemSize().x() / 2.0) { dr[0] -= system->systemSize().x(); }
+            if (dr.x() < -system->systemSize().x() / 2.0) { dr[0] += system->systemSize().x(); }
 
-            if (dr.y() >  system->systemSize().y() / 2) { dr[1] -= system->systemSize().y(); }
-            if (dr.y() < -system->systemSize().y() / 2) { dr[1] += system->systemSize().y(); }
+            if (dr.y() >  system->systemSize().y() / 2.0) { dr[1] -= system->systemSize().y(); }
+            if (dr.y() < -system->systemSize().y() / 2.0) { dr[1] += system->systemSize().y(); }
 
-            if (dr.z() >  system->systemSize().z() / 2) { dr[2] -= system->systemSize().z(); }
-            if (dr.z() < -system->systemSize().z() / 2) { dr[2] += system->systemSize().z(); }
+            if (dr.z() >  system->systemSize().z() / 2.0) { dr[2] -= system->systemSize().z(); }
+            if (dr.z() < -system->systemSize().z() / 2.0) { dr[2] += system->systemSize().z(); }
 
             // calculate force
             dr6 = pow(dr.length(), 6);
             dr2 = dr.lengthSquared();
-            forceOnAtom = -24*m_epsilon*m_sigma6*(1 / dr6)*((2*m_sigma6) / dr6 - 1) * (dr / dr2);
+            forceOnAtom = 24*m_epsilon*m_sigma6*(1.0 / dr6)*((2*m_sigma6) / dr6 - 1) * (dr / dr2);
 
             // add contribution to force on atom i and j
             system->atoms()[i]->force += forceOnAtom;
