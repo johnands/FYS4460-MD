@@ -2,7 +2,6 @@
 #define EULERCROMER_H
 #include "integrators/integrator.h"
 
-class System;
 class EulerCromer : public Integrator
 {
 public:

@@ -9,10 +9,11 @@ class Potential
 {
 protected:
     double m_potentialEnergy = 0;
+    class System m_system;
 public:
-    Potential();
+    Potential(class System &system);
     virtual ~Potential() {}
-    virtual void calculateForces(System *system) = 0;
+    virtual void calculateForces() = 0;
     double potentialEnergy();
     void setPotentialEnergy(double potentialEnergy);
 };

@@ -10,6 +10,6 @@ private:
     double m_sigma6 = 1.0;
 public:
     LennardJones(System &system, double sigma, double epsilon);
-    virtual void calculateForces(System *system);
+    virtual void calculateForces();
 };
 #endif

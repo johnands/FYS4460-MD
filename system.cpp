@@ -15,7 +15,7 @@ System::System()
 
 }
 
-System::~System()
+/*System::~System()
 {
     delete m_potential;
     delete m_integrator;
@@ -23,7 +23,7 @@ System::~System()
         delete atom;
     }
     m_atoms.clear();
-}
+}*/
 
 void System::applyPeriodicBoundaryConditions() {
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
@@ -77,11 +77,12 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
     double lc = latticeConstant;
     double size = numberOfUnitCellsEachDimension*lc;
     setSystemSize(vec3(size, size, size));
+    setSystemSizeHalf(vec3(size/2.0, size/2.0, size/2.0));
 
     // // create FCC lattice
-    for (int i=0; i<numberOfUnitCellsEachDimension; i++) {
-        for (int j=0; j<numberOfUnitCellsEachDimension; j++) {
-            for (int k=0; k<numberOfUnitCellsEachDimension; k++) {
+    for (int i=0; i < numberOfUnitCellsEachDimension; i++) {
+        for (int j=0; j < numberOfUnitCellsEachDimension; j++) {
+            for (int k=0; k < numberOfUnitCellsEachDimension; k++) {
                 // find position of all four atoms in each cell
 
                 Atom *atom1 = new Atom(mass);
@@ -112,7 +113,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 void System::calculateForces() {
     resetForcesOnAllAtoms();
     m_potential->setPotentialEnergy(0.0);
-    m_potential->calculateForces(this);
+    m_potential->calculateForces();
 }
 
 void System::step(double dt) {

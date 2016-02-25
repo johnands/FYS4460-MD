@@ -1,8 +1,8 @@
 #include "potential.h"
 
-Potential::Potential()
+Potential::Potential(System &system)
 {
-
+    m_system = system;
 }
 
 double Potential::potentialEnergy()

@@ -14,8 +14,8 @@ private:
     CellList *m_cellList = nullptr;
 
 public:
-    LennardJonesCellList(double sigma, double epsilon, double cutOffDistance);
-    virtual void calculateForces(System *system);
+    LennardJonesCellList(System &system, double sigma, double epsilon, double cutOffDistance);
+    virtual void calculateForces();
 
     // setters and getters
     CellList *celllist() { return m_cellList; }

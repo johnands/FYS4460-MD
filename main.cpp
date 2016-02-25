@@ -23,7 +23,7 @@ int main(int numberOfArguments, char **argumentList)
     cout << d << endl;*/
 
 
-    int numberOfUnitCells = 2;
+    int numberOfUnitCells = 5;
     double initialTemperature = UnitConverter::temperatureFromSI(100.0);  // measured in Kelvin
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
 
@@ -49,7 +49,7 @@ int main(int numberOfArguments, char **argumentList)
 
     System system;
     system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass);
-    system.setPotential(new LennardJonesCellList(1.0, 1.0, 3.0)); // You must insert correct parameters here
+    system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 3)); // You must insert correct parameters here
     system.setIntegrator(new EulerCromer());
     system.removeTotalMomentum();
 
@@ -58,7 +58,7 @@ int main(int numberOfArguments, char **argumentList)
     movie.open("movie.xyz");
 
     cout << "Timestep Time Temperature KineticEnergy PotentialEnergy TotalEnergy" << endl;
-    for (int timestep=0; timestep<1000; timestep++) {
+    for (int timestep=0; timestep<2; timestep++) {
         system.step(dt);
         statisticsSampler.sample(system);
         if( !(timestep % 100) ) {

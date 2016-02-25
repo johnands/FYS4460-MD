@@ -11,6 +11,7 @@ class System
 {
 private:
     vec3 m_systemSize;
+    vec3 m_systemSizeHalf;
     vector<Atom*> m_atoms;
     Potential* m_potential = nullptr;
     Integrator* m_integrator = nullptr;
@@ -19,7 +20,7 @@ private:
 
 public:
     System();
-    ~System();
+    //~System();
     void resetForcesOnAllAtoms();
     void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass);
     void applyPeriodicBoundaryConditions();
@@ -29,10 +30,13 @@ public:
 
     int m_steps = 0;
 
+
     // Setters and getters
     vector<Atom *>& atoms() { return m_atoms; } // Returns a reference to the std::vector of atom pointers
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
+    vec3 systemSizeHalf() { return m_systemSizeHalf; }
+    void setSystemSizeHalf(vec3 systemSizeHalf) { m_systemSizeHalf = systemSizeHalf; }
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
     double time() { return m_time; }

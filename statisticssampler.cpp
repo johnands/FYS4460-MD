@@ -26,7 +26,7 @@ void StatisticsSampler::sampleKineticEnergy(System &system)
 {
     m_kineticEnergy = 0; // Remember to reset the value from the previous timestep
     for(Atom *atom : system.atoms()) {
-
+        m_kineticEnergy += 0.5 * atom->mass() * atom->velocity.lengthSquared();
     }
 }
 

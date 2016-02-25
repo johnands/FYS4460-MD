@@ -20,3 +20,9 @@ void Atom::resetVelocityMaxwellian(double temperature)
     double standardDeviation = sqrt(boltzmannConstant*temperature/m_mass);
     velocity.randomGaussian(0, standardDeviation);
 }
+
+void Atom::setCellIndicies(int i, int j, int k) {
+    m_cellIndicies[0] = i;
+    m_cellIndicies[1] = j;
+    m_cellIndicies[2] = k;
+}

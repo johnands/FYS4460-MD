@@ -19,7 +19,7 @@ public:
     void sampleDensity(System &system);
     double kineticEnergy() { return m_kineticEnergy; }
     double potentialEnergy() { return m_potentialEnergy; }
-    double totalEnergy() { return m_kineticEnergy+m_potentialEnergy; }
+    double totalEnergy() { return m_kineticEnergy + m_potentialEnergy; }
     double temperature() { return m_temperature; }
     double density() { return m_density; }
 };
