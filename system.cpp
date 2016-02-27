@@ -46,23 +46,17 @@ void System::applyPeriodicBoundaryConditions() {
 void System::removeTotalMomentum() {
     // Find the total momentum and remove momentum equally on each atom so the total momentum becomes zero
 
-    double totalMomentumX = 0;
-    double totalMomentumY = 0;
-    double totalMomentumZ = 0;
+    vec3 totalMomentum;
 
     // find total velocity
     for (Atom *atom : m_atoms) {
-        totalMomentumX += atom->mass() * atom->velocity.x();
-        totalMomentumY += atom->mass() * atom->velocity.y();
-        totalMomentumZ += atom->mass() * atom->velocity.z();
+        totalMomentum += atom->mass() * atom->velocity;
     }
 
     // remove momentum equally on each atom
     int N = m_atoms.size();
     for (Atom *atom : m_atoms) {
-        atom->velocity[0] -= totalMomentumX / (atom->mass() * (double) N);
-        atom->velocity[1] -= totalMomentumY / (atom->mass() * (double) N);
-        atom->velocity[2] -= totalMomentumZ / (atom->mass() * (double) N);
+        atom->velocity -= totalMomentum / (atom->mass() * (double) N);
     }
 }
 
@@ -79,7 +73,8 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
     setSystemSize(vec3(size, size, size));
     setSystemSizeHalf(vec3(size/2.0, size/2.0, size/2.0));
 
-    // // create FCC lattice
+    // create FCC lattice
+    int index = 0;
     for (int i=0; i < numberOfUnitCellsEachDimension; i++) {
         for (int j=0; j < numberOfUnitCellsEachDimension; j++) {
             for (int k=0; k < numberOfUnitCellsEachDimension; k++) {
@@ -89,21 +84,29 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
                 atom1->position.set(lc*i, lc*j, lc*k);
                 atom1->resetVelocityMaxwellian(temperature);
                 m_atoms.push_back(atom1);
+                atom1->setIndex(index);
+                index++;
 
                 Atom *atom2 = new Atom(mass);
                 atom2->position.set(lc*(i+0.5), lc*(j+0.5), lc*k);
                 atom2->resetVelocityMaxwellian(temperature);
                 m_atoms.push_back(atom2);
+                atom2->setIndex(index);
+                index++;
 
                 Atom *atom3 = new Atom(mass);
                 atom3->position.set(lc*i, lc*(j+0.5), lc*(k+0.5));
                 atom3->resetVelocityMaxwellian(temperature);
                 m_atoms.push_back(atom3);
+                atom3->setIndex(index);
+                index++;
 
                 Atom *atom4 = new Atom(mass);
                 atom4->position.set(lc*(i+0.5), lc*j, lc*(k+0.5));
                 atom4->resetVelocityMaxwellian(temperature);
                 m_atoms.push_back(atom4);
+                atom4->setIndex(index);
+                index++;
 
             }
         }
@@ -113,6 +116,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 void System::calculateForces() {
     resetForcesOnAllAtoms();
     m_potential->setPotentialEnergy(0.0);
+    m_potential->setPressure(0.0);
     m_potential->calculateForces();
 }
 

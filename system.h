@@ -16,6 +16,7 @@ private:
     Potential* m_potential = nullptr;
     Integrator* m_integrator = nullptr;
     double m_time = 0;
+    int m_steps = 0;
 
 
 public:
@@ -27,8 +28,6 @@ public:
     void removeTotalMomentum();
     void calculateForces();
     void step(double dt);
-
-    int m_steps = 0;
 
 
     // Setters and getters

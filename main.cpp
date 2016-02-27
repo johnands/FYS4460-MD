@@ -10,21 +10,20 @@
 #include "unitconverter.h"
 #include "celllist.h"
 #include <iostream>
+#include <time.h>
 
 using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-
-    /*double a = 7.9;
-    int b = 12;
-    int c = 24;
-    int d = a/b*c;
-    cout << d << endl;*/
+    /*
+    vec3 test = vec3(10, 5, 2);
+    vec3 test2 = vec3(5, 2, 4);
+    cout << test.dot(test2) << endl;*/
 
 
-    int numberOfUnitCells = 5;
-    double initialTemperature = UnitConverter::temperatureFromSI(100.0);  // measured in Kelvin
+    int numberOfUnitCells = 8;
+    double initialTemperature = UnitConverter::temperatureFromSI(300.0);  // measured in Kelvin
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
 
     // If a first argument is provided, it is the number of unit cells
@@ -38,7 +37,7 @@ int main(int numberOfArguments, char **argumentList)
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
 
-    double dt = UnitConverter::timeFromSI(1e-15); // Measured in seconds
+    double dt = 0.01; //UnitConverter::timeFromSI(5e-14); // Measured in seconds
 
     cout << "One unit of length is "      << UnitConverter::lengthToSI(1.0)      << " meters"        << endl;
     cout << "One unit of velocity is "    << UnitConverter::velocityToSI(1.0)    << " meters/second" << endl;
@@ -49,26 +48,36 @@ int main(int numberOfArguments, char **argumentList)
 
     System system;
     system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass);
+    //system.setPotential(new LennardJones(system, 1.0, 1.0));
     system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 3)); // You must insert correct parameters here
-    system.setIntegrator(new EulerCromer());
+    //system.setIntegrator(new EulerCromer());
+    system.setIntegrator(new VelocityVerlet());
     system.removeTotalMomentum();
 
-    StatisticsSampler statisticsSampler;
-    IO movie; // To write the state to file
-    movie.open("movie.xyz");
+    StatisticsSampler statisticsSampler(system);
+    //IO movie; // To write the state to file
+    //movie.open("movie.xyz");
 
-    cout << "Timestep Time Temperature KineticEnergy PotentialEnergy TotalEnergy" << endl;
-    for (int timestep=0; timestep<2; timestep++) {
+    cout << "Timestep Time Temperature Pressure Density KineticEnergy PotentialEnergy TotalEnergy" << endl;
+
+    clock_t start, finish;
+    start = clock();
+    for (int timestep=0; timestep<501; timestep++) {
         system.step(dt);
-        statisticsSampler.sample(system);
+        statisticsSampler.sample();
         if( !(timestep % 100) ) {
             // Print the timestep every 100 timesteps
-            cout << system.steps() << "      " << system.time() << "      " << statisticsSampler.temperature() << "      " << statisticsSampler.kineticEnergy() << "      " << statisticsSampler.potentialEnergy() << "      " << statisticsSampler.totalEnergy() << endl;
+            cout << system.steps() << "      " << system.time() << "    " << statisticsSampler.temperature() << "    "
+                 << statisticsSampler.pressure() << "  "  << statisticsSampler.density() << "    "
+                 << statisticsSampler.kineticEnergy() << "     " << statisticsSampler.potentialEnergy() << "      "
+                 << statisticsSampler.totalEnergy() << endl;
         }
-        movie.saveState(&system);
+        //movie.saveState(&system);
     }
+    finish = clock();
+    cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
-    movie.close();
+    //movie.close();
 
     return 0;
 }

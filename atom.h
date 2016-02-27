@@ -7,6 +7,7 @@ class Atom
 {
 private:
     float m_mass;
+    int m_index;
     std::vector<Atom *> m_neighbourList;
     vec3 m_cellIndicies;
 
@@ -21,6 +22,7 @@ public:
 
     // getters
     double mass() { return m_mass; }
+    int getIndex() { return m_index; }
     std::vector<Atom *> neighbourList() { return m_neighbourList; }
     vec3 cellIndicies() { return m_cellIndicies; }
 
@@ -28,5 +30,6 @@ public:
     void setMass(double mass) { m_mass = mass; }
     void addToNeighbourList(Atom * atom) { m_neighbourList.push_back(atom); }
     void setCellIndicies(int i, int j, int k);
+    void setIndex(int index);
 };
 #endif

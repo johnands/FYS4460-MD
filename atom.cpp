@@ -26,3 +26,7 @@ void Atom::setCellIndicies(int i, int j, int k) {
     m_cellIndicies[1] = j;
     m_cellIndicies[2] = k;
 }
+
+void Atom::setIndex(int index) {
+    m_index = index;
+}

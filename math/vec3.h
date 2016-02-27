@@ -16,6 +16,7 @@ public:
 
     void print();
     void print(string name);
+    double dot(vec3 aVector);
     vec3 cross(vec3 aVector);
     double lengthSquared();
     double length();

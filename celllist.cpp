@@ -8,7 +8,6 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-// a.resize(k, new balle())
 CellList::CellList(System &system, double cutOffDistance) {
     m_cutOffDistance = cutOffDistance;
     m_cutOffDistance2 = cutOffDistance*cutOffDistance;
@@ -29,6 +28,8 @@ void CellList::setupCells() {
                     vector<vector<vector<Atom*>>>(m_numberOfCellsEachDimension,
                     vector<vector<Atom*>> (m_numberOfCellsEachDimension,
                     vector<Atom*> ())) );
+
+    m_neighbours.resize(m_system.atoms().size());
 }
 
 
@@ -90,8 +91,8 @@ void CellList::updateCells() {
 
 
                                     // add atom2 to atom1 neighbour list if distance is shorter than cut-off distance
-                                    if (r2 < m_cutOffDistance2){
-                                        atom1->addToNeighbourList(atom2);
+                                    if (r2 < 2.8){
+                                        m_neighbours[atom1->getIndex()].push_back(atom2);
                                     }
                                 }
                             }
@@ -107,8 +108,16 @@ void CellList::clearCells() {
     for (int i=0; i < m_numberOfCellsEachDimension; i++) {
         for (int j=0; j < m_numberOfCellsEachDimension; j++) {
             for (int k=0; k < m_numberOfCellsEachDimension; k++) {
+                /*for (int l=0; l < m_cells[i][j][k].size(); l++) {
+                    m_cells[i][j][k][l]->neighbourList().clear();
+                }*/
                 m_cells[i][j][k].clear();
-            }
+            }  
         }
+    }
+    /*for (int l=0; l < m_system.atoms().size(); l++) {
+        m_system.atoms()[l]->neighbourList().clear();*/
+    for (int l = 0; l < m_system.atoms().size(); l++) {
+        m_neighbours[l].clear();
     }
 }
