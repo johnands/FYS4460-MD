@@ -1,6 +1,7 @@
 #include "atom.h"
 #include "math/random.h"
 #include <cmath>
+#include <iostream>
 
 Atom::Atom(double mass) :
     m_mass(mass)
@@ -18,7 +19,13 @@ void Atom::resetVelocityMaxwellian(double temperature)
     // Resetting the velocity according to a Maxwell-Boltzmann distribution (see http://en.wikipedia.org/wiki/Maxwell%E2%80%93Boltzmann_distribution )
     double boltzmannConstant = 1.0; // In these units, the boltzmann constant equals 1
     double standardDeviation = sqrt(boltzmannConstant*temperature/m_mass);
+    std::cout << standardDeviation << std::endl;
     velocity.randomGaussian(0, standardDeviation);
+}
+
+void Atom::resetVelocityUniform(double maxMinVelocity)
+{
+    velocity.randomUniform(maxMinVelocity);
 }
 
 void Atom::setCellIndicies(int i, int j, int k) {

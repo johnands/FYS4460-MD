@@ -16,13 +16,7 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    /*
-    vec3 test = vec3(10, 5, 2);
-    vec3 test2 = vec3(5, 2, 4);
-    cout << test.dot(test2) << endl;*/
-
-
-    int numberOfUnitCells = 8;
+    int numberOfUnitCells = 10;
     double initialTemperature = UnitConverter::temperatureFromSI(300.0);  // measured in Kelvin
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
 
@@ -46,8 +40,11 @@ int main(int numberOfArguments, char **argumentList)
     cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K"             << endl;
     cout << "One unit of energy is "      << UnitConverter::energyToSI(1.0)      << " J"             << endl;
 
+    bool BoltzmannDist = true;      // initial velocities given by Boltzmann distribution
+    double maxMinVelocity = 2.0;           // uniformly distributed velocities [-v, v]
+
     System system;
-    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass);
+    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass, BoltzmannDist, maxMinVelocity);
     //system.setPotential(new LennardJones(system, 1.0, 1.0));
     system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 3)); // You must insert correct parameters here
     //system.setIntegrator(new EulerCromer());
@@ -55,14 +52,14 @@ int main(int numberOfArguments, char **argumentList)
     system.removeTotalMomentum();
 
     StatisticsSampler statisticsSampler(system);
-    //IO movie; // To write the state to file
-    //movie.open("movie.xyz");
+    IO movie; // To write the state to file
+    movie.open("movie.xyz");
 
     cout << "Timestep Time Temperature Pressure Density KineticEnergy PotentialEnergy TotalEnergy" << endl;
 
     clock_t start, finish;
     start = clock();
-    for (int timestep=0; timestep<501; timestep++) {
+    for (int timestep=0; timestep<1; timestep++) {
         system.step(dt);
         statisticsSampler.sample();
         if( !(timestep % 100) ) {
@@ -72,12 +69,12 @@ int main(int numberOfArguments, char **argumentList)
                  << statisticsSampler.kineticEnergy() << "     " << statisticsSampler.potentialEnergy() << "      "
                  << statisticsSampler.totalEnergy() << endl;
         }
-        //movie.saveState(&system);
+        movie.saveState(&system);
     }
     finish = clock();
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
-    //movie.close();
+    movie.close();
 
     return 0;
 }

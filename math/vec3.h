@@ -31,6 +31,7 @@ public:
     double &operator()(int index) { return components[index]; } // Allows access like myVector(0)
     double &operator[](int index) { return components[index]; } // Allows access like myVector[0]
     void randomGaussian(double mean, double standardDeviation);
+    void randomUniform(double maxMinVelocity);
     vec3 &operator+=(double rhs); // Componentwise addition with scalar
     vec3 &operator+=(vec3 rhs);   // Componentwise addition with vector
     vec3 &operator*=(double rhs); // Componentwise multiplication with scalar

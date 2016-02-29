@@ -3,6 +3,7 @@
 #include "atom.h"
 #include "unitconverter.h"
 #include <cstdlib>
+
 using std::endl; using std::cout;
 
 IO::IO()
@@ -34,7 +35,7 @@ void IO::saveState(System *system)
 {
     if(file.is_open()) {
         file << system->atoms().size() << endl;
-        file << "The is an optional comment line that can be empty." << endl;
+        file << "x y z vx vy vz" << endl;
         for(Atom *atom : system->atoms()) {
             file << "Ar " << UnitConverter::lengthToAngstroms(atom->position.x()) << " " << UnitConverter::lengthToAngstroms(atom->position.y()) << " " << UnitConverter::lengthToAngstroms(atom->position.z()) << " "
                           << atom->velocity.x() << " " << atom->velocity.y() << " " << atom->velocity.z() <<  endl;

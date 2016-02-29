@@ -66,7 +66,8 @@ void System::resetForcesOnAllAtoms() {
     }
 }
 
-void System::createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass) {
+void System::createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass,
+                              bool BoltzmannDist, double maxMinVelocity) {
 
     double lc = latticeConstant;
     double size = numberOfUnitCellsEachDimension*lc;
@@ -82,28 +83,32 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
                 Atom *atom1 = new Atom(mass);
                 atom1->position.set(lc*i, lc*j, lc*k);
-                atom1->resetVelocityMaxwellian(temperature);
+                if (BoltzmannDist) { atom1->resetVelocityMaxwellian(temperature); }
+                else               { atom1->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom1);
                 atom1->setIndex(index);
                 index++;
 
                 Atom *atom2 = new Atom(mass);
                 atom2->position.set(lc*(i+0.5), lc*(j+0.5), lc*k);
-                atom2->resetVelocityMaxwellian(temperature);
+                if (BoltzmannDist) { atom2->resetVelocityMaxwellian(temperature); }
+                else               { atom2->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom2);
                 atom2->setIndex(index);
                 index++;
 
                 Atom *atom3 = new Atom(mass);
                 atom3->position.set(lc*i, lc*(j+0.5), lc*(k+0.5));
-                atom3->resetVelocityMaxwellian(temperature);
+                if (BoltzmannDist) { atom3->resetVelocityMaxwellian(temperature); }
+                else               { atom3->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom3);
                 atom3->setIndex(index);
                 index++;
 
                 Atom *atom4 = new Atom(mass);
                 atom4->position.set(lc*(i+0.5), lc*j, lc*(k+0.5));
-                atom4->resetVelocityMaxwellian(temperature);
+                if (BoltzmannDist) { atom4->resetVelocityMaxwellian(temperature); }
+                else               { atom4->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom4);
                 atom4->setIndex(index);
                 index++;

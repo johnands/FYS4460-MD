@@ -73,6 +73,13 @@ void vec3::randomGaussian(double mean, double standardDeviation)
     components[2] = Random::nextGaussian(mean, standardDeviation);
 }
 
+void vec3::randomUniform(double maxMinVelocity)
+{
+    components[0] = 2*maxMinVelocity*Random::nextDouble() - maxMinVelocity;
+    components[1] = 2*maxMinVelocity*Random::nextDouble() - maxMinVelocity;
+    components[2] = 2*maxMinVelocity*Random::nextDouble() - maxMinVelocity;
+}
+
 vec3 &vec3::operator+=(double rhs)
 {
     components[0] += rhs;

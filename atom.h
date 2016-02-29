@@ -19,6 +19,7 @@ public:
     Atom(double mass);
     void resetForce();
     void resetVelocityMaxwellian(double temperature);
+    void resetVelocityUniform(double maxMinVelocity);
 
     // getters
     double mass() { return m_mass; }

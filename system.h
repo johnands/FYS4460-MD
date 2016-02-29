@@ -23,7 +23,8 @@ public:
     System();
     //~System();
     void resetForcesOnAllAtoms();
-    void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass);
+    void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass,
+                          bool BoltzmannDist, double maxMinVelocity);
     void applyPeriodicBoundaryConditions();
     void removeTotalMomentum();
     void calculateForces();
