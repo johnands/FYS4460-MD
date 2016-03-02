@@ -10,7 +10,6 @@ using std::vector;
 
 CellList::CellList(System &system, double cutOffDistance) {
     m_cutOffDistance = cutOffDistance;
-    m_cutOffDistance2 = cutOffDistance*cutOffDistance;
     m_system = system;
 }
 
@@ -79,7 +78,7 @@ void CellList::updateCells() {
                                     Atom* atom2 = m_cells[cii][cjj][ckk][b];    // atom in chosen neighbour cell
 
                                     // find distance between atom1 and atom2
-                                    vec3 dr; double r2;
+                                    vec3 dr;
                                     dr = atom2->position - atom1->position;
 
                                     // apply periodic boundary conditions
@@ -87,11 +86,9 @@ void CellList::updateCells() {
                                         if (dr[dim] > m_system.systemSizeHalf()[dim]) { dr[dim] -= m_system.systemSize()[dim]; }
                                         else if (dr[dim] < -m_system.systemSizeHalf()[dim]) { dr[dim] += m_system.systemSize()[dim]; }
                                     }
-                                    r2 = dr.lengthSquared();
-
 
                                     // add atom2 to atom1 neighbour list if distance is shorter than cut-off distance
-                                    if (r2 < 2.8){
+                                    if (dr.length() < m_cutOffDistance){
                                         m_neighbours[atom1->getIndex()].push_back(atom2);
                                     }
                                 }

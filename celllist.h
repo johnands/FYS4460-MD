@@ -20,7 +20,6 @@ private:
     vector<vector<class Atom*>> m_neighbours;
     int m_numberOfCellsEachDimension;
     double m_cutOffDistance;
-    double m_cutOffDistance2;
     class System m_system;
 };
 

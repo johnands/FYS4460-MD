@@ -10,6 +10,7 @@ private:
     int m_index;
     std::vector<Atom *> m_neighbourList;
     vec3 m_cellIndicies;
+    vec3 m_initialPosition;
 
 public:
     vec3 position;
@@ -20,12 +21,14 @@ public:
     void resetForce();
     void resetVelocityMaxwellian(double temperature);
     void resetVelocityUniform(double maxMinVelocity);
+    void storeInitialPosition();
 
     // getters
     double mass() { return m_mass; }
     int getIndex() { return m_index; }
     std::vector<Atom *> neighbourList() { return m_neighbourList; }
     vec3 cellIndicies() { return m_cellIndicies; }
+    vec3 initialPosition() { return m_initialPosition; }
 
     // setters
     void setMass(double mass) { m_mass = mass; }

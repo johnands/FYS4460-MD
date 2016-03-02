@@ -12,6 +12,7 @@ class System
 private:
     vec3 m_systemSize;
     vec3 m_systemSizeHalf;
+    bool m_periodicBoundaries;
     vector<Atom*> m_atoms;
     Potential* m_potential = nullptr;
     Integrator* m_integrator = nullptr;
@@ -37,6 +38,9 @@ public:
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     vec3 systemSizeHalf() { return m_systemSizeHalf; }
     void setSystemSizeHalf(vec3 systemSizeHalf) { m_systemSizeHalf = systemSizeHalf; }
+    void setPeriodicBoundaries(bool periodicBoundaries) { m_periodicBoundaries = periodicBoundaries; }
+    bool getPeriodicBoundaries() { return m_periodicBoundaries; }
+
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
     double time() { return m_time; }

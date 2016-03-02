@@ -48,7 +48,7 @@ void System::removeTotalMomentum() {
 
     vec3 totalMomentum;
 
-    // find total velocity
+    // find total momentum
     for (Atom *atom : m_atoms) {
         totalMomentum += atom->mass() * atom->velocity;
     }
@@ -83,6 +83,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
                 Atom *atom1 = new Atom(mass);
                 atom1->position.set(lc*i, lc*j, lc*k);
+                atom1->storeInitialPosition();
                 if (BoltzmannDist) { atom1->resetVelocityMaxwellian(temperature); }
                 else               { atom1->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom1);
@@ -91,6 +92,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
                 Atom *atom2 = new Atom(mass);
                 atom2->position.set(lc*(i+0.5), lc*(j+0.5), lc*k);
+                atom2->storeInitialPosition();
                 if (BoltzmannDist) { atom2->resetVelocityMaxwellian(temperature); }
                 else               { atom2->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom2);
@@ -99,6 +101,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
                 Atom *atom3 = new Atom(mass);
                 atom3->position.set(lc*i, lc*(j+0.5), lc*(k+0.5));
+                atom3->storeInitialPosition();
                 if (BoltzmannDist) { atom3->resetVelocityMaxwellian(temperature); }
                 else               { atom3->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom3);
@@ -107,12 +110,12 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
                 Atom *atom4 = new Atom(mass);
                 atom4->position.set(lc*(i+0.5), lc*j, lc*(k+0.5));
+                atom4->storeInitialPosition();
                 if (BoltzmannDist) { atom4->resetVelocityMaxwellian(temperature); }
                 else               { atom4->resetVelocityUniform(maxMinVelocity); }
                 m_atoms.push_back(atom4);
                 atom4->setIndex(index);
                 index++;
-
             }
         }
     }

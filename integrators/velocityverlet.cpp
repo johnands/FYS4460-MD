@@ -1,6 +1,5 @@
 #include "velocityverlet.h"
 #include "../system.h"
-#include "../atom.h"
 #include <iostream>
 
 using std::cout;
@@ -16,7 +15,7 @@ void VelocityVerlet::integrate(System *system, double dt)
     }
 
     vec3 v_half;
-    for(Atom *atom : system->atoms()) {
+    for (Atom *atom : system->atoms()) {
         v_half = atom->velocity + atom->force*dtHalf / atom->mass();
         atom->position += v_half*dt;
     }
@@ -24,8 +23,8 @@ void VelocityVerlet::integrate(System *system, double dt)
     system->applyPeriodicBoundaryConditions();
     system->calculateForces();
 
-    for(Atom *atom : system->atoms()) {
-        atom->velocity = v_half + atom->force*dt / atom->mass();
+    for (Atom *atom : system->atoms()) {
+        atom->velocity = v_half + atom->force*dtHalf / atom->mass();
     }
 
 
