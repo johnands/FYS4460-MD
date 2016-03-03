@@ -22,7 +22,7 @@ void StatisticsSampler::saveToFile(int timeStep)
 {
 
     if (m_initialSample) {
-        m_outFile.open("samples.txt", fstream::out | fstream::trunc);
+        m_outFile.open("LJVV8.txt", fstream::out | fstream::trunc);
         m_outFile << setw(12) << "Time step"   << " ";
         m_outFile << setw(12) << "Kinetic"     << " ";
         m_outFile << setw(12) << "Potential"   << " ";
@@ -34,7 +34,7 @@ void StatisticsSampler::saveToFile(int timeStep)
         m_outFile.close();
     }
 
-    m_outFile.open("samples.txt", fstream::out | fstream::app);
+    m_outFile.open("LJVV8.txt", fstream::out | fstream::app);
 
     m_outFile << setw(12) << setprecision(7) << timeStep  << " ";
     m_outFile << setw(12) << setprecision(7) << m_kineticEnergy   << " ";

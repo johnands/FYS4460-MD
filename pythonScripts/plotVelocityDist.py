@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def extract(filename):
+def extractInitial(filename):
 
     infile = open(filename, 'r')
 
@@ -29,9 +29,47 @@ def extract(filename):
     return vx, vy, vz, n
 
 
+def extractWhole(filename):
 
-def treat():
-    vx, vy, vz, n = extract('movie.xyz')
+    infile = open(filename, 'r')
+
+    noAtoms = int(infile.readline()) 	
+    infile.readline()						# skip comment line
+			
+    # initialize lists
+    velocities = []
+    speeds = []
+
+    # extract velocities from file
+    
+    velocities.append([])
+    speeds.append([])
+    timeStep = 0
+    for line in infile:
+        words = line.split() 
+        if len(words) == 7:
+            vx = float(words[4])
+            vy = float(words[5])
+            vz = float(words[6])
+            v = np.sqrt(vx**2 + vy**2 + vz**2)
+            velocities[timeStep].append([vx, vy, vz])
+            speeds[timeStep].append(v)
+        elif len(words) == 1:
+            timeStep += 1
+            velocities.append([])
+            speeds.append([])
+        else:
+            pass
+
+    infile.close()
+
+    return velocities, speeds, timeStep, noAtoms
+
+
+
+
+def plotInitialDistribution():
+    vx, vy, vz, noAtoms = extractInitial('animateVelocityDist.xyz')
 
     # convert to numpy arrays
     vx = np.array(vx); vy = np.array(vy); vz = np.array(vz)
@@ -62,8 +100,37 @@ def treat():
 
     plt.hist(v, bins=100)
     plt.show()
+
+
+def animateDistribution():
+    velocities, speeds, noTimeSteps, noAtoms = extractWhole('animateVelocityDist.xyz')
+
+    # convert to numpy arrays
+    velocities = np.array(velocities)
+    speeds = np.array(speeds)
+
+    print velocities.shape
+    print speeds.shape
+    print velocities[0][:][:,0].shape
+
+    # animate velocities
+    for t in xrange(noTimeSteps):
+        if not t % 10:
+            plt.hist(velocities[t][:][:,0], bins=100)
+            plt.show()  
+    
+    """
+    # animate speeds
+    for t in xrange(noTimeSteps):
+        if not t % 100:
+            plt.hist(speeds[t][:], bins=100)
+            plt.show()  
+    """    
+    
+
     
 
 # main
 
-treat()
+#plotInitialDistribution()
+animateDistribution()

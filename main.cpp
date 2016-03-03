@@ -16,9 +16,10 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 12;
-    double initialTemperature = UnitConverter::temperatureFromSI(50);  // measured in Kelvin
+    int numberOfUnitCells = 8;
+    double initialTemperature = UnitConverter::temperatureFromSI(100);  // measured in Kelvin
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
+    cout << latticeConstant << endl;
 
     // If a first argument is provided, it is the number of unit cells
     if(numberOfArguments > 1) numberOfUnitCells = atoi(argumentList[1]);
@@ -40,7 +41,7 @@ int main(int numberOfArguments, char **argumentList)
     cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K"             << endl;
     cout << "One unit of energy is "      << UnitConverter::energyToSI(1.0)      << " J"             << endl;
 
-    bool BoltzmannDist = true;             // initial velocities given by Boltzmann distribution
+    bool BoltzmannDist = false;             // initial velocities given by Boltzmann distribution
     double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
     bool periodicBoundaries = true;
     bool writeSampleToFile = false;
@@ -49,39 +50,39 @@ int main(int numberOfArguments, char **argumentList)
     system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass, BoltzmannDist, maxMinVelocity);
     //system.setPotential(new LennardJones(system, 1.0, 1.0));
     system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5)); // You must insert correct parameters here
-    system.setIntegrator(new EulerCromer());
-    //system.setIntegrator(new VelocityVerlet());
+    //system.setIntegrator(new EulerCromer());
+    system.setIntegrator(new VelocityVerlet());
     system.removeTotalMomentum();
     system.setPeriodicBoundaries(periodicBoundaries);
 
     StatisticsSampler statisticsSampler(system, writeSampleToFile);
-    //IO movie; // To write the state to file
-    //movie.open("movie.xyz");
+    IO movie; // To write the state to file
+    movie.open("animateVelocityDist.xyz");
 
     cout << "Timestep Time Temperature Pressure Density KineticEnergy PotentialEnergy TotalEnergy" << endl;
 
     // sample initial state
-    statisticsSampler.sample(0);
+    movie.saveState(&system);
 
     clock_t start, finish;
     start = clock();
     for (int timestep=0; timestep < 501; timestep++) {
         system.step(dt);
         statisticsSampler.sample(timestep);
-        statisticsSampler.sampleRadialDistribution(50);
+        //statisticsSampler.sampleRadialDistribution(50);
         if( !(timestep % 100) ) {
-            // Print the timestep every 100 timesteps
+            // print the timestep every 100 timesteps
             cout << system.steps() << "      " << system.time() << "    " << statisticsSampler.temperature() << "    "
                  << statisticsSampler.pressure() << "  "  << statisticsSampler.density() << "    "
                  << statisticsSampler.kineticEnergy() << "     " << statisticsSampler.potentialEnergy() << "      "
                  << statisticsSampler.totalEnergy() << endl;
         }
-        //movie.saveState(&system);
+        movie.saveState(&system);
     }
     finish = clock();
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
-    //movie.close();
+    movie.close();
 
     return 0;
 }

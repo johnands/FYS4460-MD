@@ -8,5 +8,8 @@ public:
     VelocityVerlet() { }
     ~VelocityVerlet() { }
     virtual void integrate(System *system, double dt) override;
+
+private:
+    bool m_firstStep = true;
 };
 #endif

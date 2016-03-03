@@ -10,23 +10,23 @@ void VelocityVerlet::integrate(System *system, double dt)
     double dtHalf = dt/2.0;
 
     // calculate forces on initial state
-    if (system->steps() == 0) {
+    if (m_firstStep) {
         system->calculateForces();
+        m_firstStep = false;
     }
 
-    vec3 v_half;
     for (Atom *atom : system->atoms()) {
-        v_half = atom->velocity + atom->force*dtHalf / atom->mass();
-        atom->position += v_half*dt;
+        atom->velocity += atom->force*dtHalf / atom->mass();
+        atom->position += atom->velocity*dt;
     }
+
 
     system->applyPeriodicBoundaryConditions();
     system->calculateForces();
 
     for (Atom *atom : system->atoms()) {
-        atom->velocity = v_half + atom->force*dtHalf / atom->mass();
+        atom->velocity += atom->force*dtHalf / atom->mass();
     }
-
 
 
 }
