@@ -3,6 +3,7 @@
 #include "potentials/lennardjonescelllist.h"
 #include "integrators/eulercromer.h"
 #include "integrators/velocityverlet.h"
+#include "thermostats/berendsen.h"
 #include "system.h"
 #include "statisticssampler.h"
 #include "atom.h"
@@ -19,16 +20,6 @@ int main(int numberOfArguments, char **argumentList)
     int numberOfUnitCells = 8;
     double initialTemperature = UnitConverter::temperatureFromSI(100);  // measured in Kelvin
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
-    cout << latticeConstant << endl;
-
-    // If a first argument is provided, it is the number of unit cells
-    if(numberOfArguments > 1) numberOfUnitCells = atoi(argumentList[1]);
-
-    // If a second argument is provided, it is the initial temperature (measured in kelvin)
-    if(numberOfArguments > 2) initialTemperature = UnitConverter::temperatureFromSI(atof(argumentList[2]));
-
-    // If a third argument is provided, it is the lattice constant determining the density (measured in angstroms)
-    if(numberOfArguments > 3) latticeConstant= UnitConverter::lengthFromAngstroms(atof(argumentList[3]));
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
 
@@ -41,20 +32,32 @@ int main(int numberOfArguments, char **argumentList)
     cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K"             << endl;
     cout << "One unit of energy is "      << UnitConverter::energyToSI(1.0)      << " J"             << endl;
 
-    bool BoltzmannDist = false;             // initial velocities given by Boltzmann distribution
+    bool BoltzmannDist = true;             // initial velocities given by Boltzmann distribution
     double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
-    bool periodicBoundaries = true;
-    bool writeSampleToFile = false;
+    double dtTau = 1;
 
     System system;
-    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature, mass, BoltzmannDist, maxMinVelocity);
+    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
+                            mass, BoltzmannDist, maxMinVelocity);
+
     //system.setPotential(new LennardJones(system, 1.0, 1.0));
-    system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5)); // You must insert correct parameters here
+    system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
     //system.setIntegrator(new EulerCromer());
     system.setIntegrator(new VelocityVerlet());
+    system.setThermostat(new Berendsen(system, initialTemperature, dtTau));
+    system.setUseThermoStat(true);
+    system.setNumberOfTimeSteps(301);
+    system.setTemperature(initialTemperature);
     system.removeTotalMomentum();
-    system.setPeriodicBoundaries(periodicBoundaries);
 
+    system.setPeriodicBoundaries(true);
+    system.setTimeStep(dt);
+    system.setRadialDistribution(false);
+    system.setMakeXYZ(false);
+
+    system.runSimulation(false);
+
+    /*
     StatisticsSampler statisticsSampler(system, writeSampleToFile);
     IO movie; // To write the state to file
     movie.open("animateVelocityDist.xyz");
@@ -82,7 +85,7 @@ int main(int numberOfArguments, char **argumentList)
     finish = clock();
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
-    movie.close();
+    movie.close();*/
 
     return 0;
 }

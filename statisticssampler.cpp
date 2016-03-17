@@ -10,12 +10,12 @@
 
 using namespace std;
 
-StatisticsSampler::StatisticsSampler(System &system, bool writeSampleToFile)
+StatisticsSampler::StatisticsSampler(System *system, bool writeSampleToFile)
 {
     m_system = system;
     m_writeSampleToFile = writeSampleToFile;
-    m_systemSize = m_system.systemSize().x();
-    m_numberOfAtoms = m_system.atoms().size();
+    m_systemSize = m_system->systemSize().x();
+    m_numberOfAtoms = m_system->atoms().size();
 }
 
 void StatisticsSampler::saveToFile(int timeStep)
@@ -60,7 +60,7 @@ void StatisticsSampler::sample(int timeStep)
 void StatisticsSampler::sampleKineticEnergy()
 {
     m_kineticEnergy = 0; // Remember to reset the value from the previous timestep
-    for(Atom *atom : m_system.atoms()) {
+    for(Atom *atom : m_system->atoms()) {
         m_kineticEnergy += 0.5 * atom->mass() * atom->velocity.lengthSquared();
     }
     m_kineticEnergy /= m_numberOfAtoms;
@@ -68,7 +68,7 @@ void StatisticsSampler::sampleKineticEnergy()
 
 void StatisticsSampler::samplePotentialEnergy()
 {
-    m_potentialEnergy = m_system.potential()->potentialEnergy() / m_numberOfAtoms;
+    m_potentialEnergy = m_system->potential()->potentialEnergy() / m_numberOfAtoms;
 }
 
 void StatisticsSampler::sampleTemperature()
@@ -78,7 +78,7 @@ void StatisticsSampler::sampleTemperature()
 
 void StatisticsSampler::samplePressure()
 {
-    m_pressure = m_system.potential()->pressure() + m_density*m_temperature;
+    m_pressure = m_system->potential()->pressure() + m_density*m_temperature;
 }
 
 void StatisticsSampler::sampleDensity()
@@ -89,7 +89,7 @@ void StatisticsSampler::sampleDensity()
 void StatisticsSampler::sampleMeanSquareDisplacement()
 {
     m_meanSquareDisplacement = 0;
-    for(Atom *atom : m_system.atoms()) {
+    for(Atom *atom : m_system->atoms()) {
         m_meanSquareDisplacement += (atom->position - atom->initialPosition()).lengthSquared();
     }
     m_meanSquareDisplacement /= m_numberOfAtoms;
@@ -106,13 +106,13 @@ void StatisticsSampler::sampleRadialDistribution(int numberOfBins) {
 
         // choose random atom
         m_chosenIndex = floor(Random::nextDouble() * m_numberOfAtoms);
-        m_chosenAtom = m_system.atoms()[m_chosenIndex];
+        m_chosenAtom = m_system->atoms()[m_chosenIndex];
 
         m_radialDistribution.resize(numberOfBins);
         m_bins.resize(numberOfBins+1);
 
         // make bins
-        m_binSize = m_system.systemSizeHalf().x() / numberOfBins;
+        m_binSize = m_system->systemSizeHalf().x() / numberOfBins;
         for (int i=0; i < numberOfBins; i++) {
             m_bins[i] = i*m_binSize;
             m_radialDistribution[i] = 0;
@@ -125,15 +125,15 @@ void StatisticsSampler::sampleRadialDistribution(int numberOfBins) {
     // loop over all pairs of atoms, calculate distance and put in bins
     for (int i=0; i < m_numberOfAtoms; i++) {
         if (i != m_chosenIndex) {
-            Atom *atom2 = m_system.atoms()[i];
+            Atom *atom2 = m_system->atoms()[i];
 
             // calculate distance
             vec3 dr = m_chosenAtom->position - atom2->position;
 
             // periodic boundary conditions
             for (int dim=0; dim < 3; dim++) {
-                if (dr[dim] > m_system.systemSizeHalf()[dim]) { dr[dim] -= m_system.systemSize()[dim]; }
-                else if (dr[dim] < -m_system.systemSizeHalf()[dim]) { dr[dim] += m_system.systemSize()[dim]; }
+                if (dr[dim] > m_system->systemSizeHalf()[dim]) { dr[dim] -= m_system->systemSize()[dim]; }
+                else if (dr[dim] < -m_system->systemSizeHalf()[dim]) { dr[dim] += m_system->systemSize()[dim]; }
             }
             double distance = dr.length();
 

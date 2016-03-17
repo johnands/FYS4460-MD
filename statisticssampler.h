@@ -7,7 +7,7 @@ class System;
 class StatisticsSampler
 {
 private:
-    System m_system;
+    System *m_system = nullptr;
     double m_systemSize;
     double m_numberOfAtoms;
     std::fstream m_outFile;
@@ -31,7 +31,7 @@ private:
     double m_meanSquareDisplacement = 0;
 
 public:
-    StatisticsSampler(System &system, bool writeSampleToFile);
+    StatisticsSampler(System *system, bool writeSampleToFile);
     void saveToFile(int timeStep);
     void sample(int timeStep);
     void sampleKineticEnergy();

@@ -3,8 +3,10 @@
 #include <fstream>
 #include "integrators/integrator.h"
 #include "potentials/potential.h"
+#include "thermostats/thermostat.h"
 #include "statisticssampler.h"
 #include "unitconverter.h"
+#include "io.h"
 #include "math/random.h"
 
 using std::cout;
@@ -121,10 +123,46 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
     }
 }
 
+void System::runSimulation(bool writeSampleToFile) {
+
+    m_statisticsSampler =  new StatisticsSampler(this, writeSampleToFile);
+    IO movie; // To write the state to file
+
+    if (getMakeXYZ()) {
+        movie.open("animateVelocityDist.xyz");
+        // sample initial state
+        movie.saveState(this);
+    }
+    double dt = getTimeStep();
+
+    cout << "Timestep Time Temperature Pressure Density KineticEnergy PotentialEnergy TotalEnergy" << endl;
+
+    clock_t start, finish;
+    start = clock();
+    for (int timeStep=0; timeStep < getNumberOfTimeSteps(); timeStep++) {
+        step(dt);
+        m_statisticsSampler->sample(timeStep);
+        if (this->getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(50); }
+        if( !(timeStep % 100) ) {
+            // print sample every 100 timesteps
+            cout << steps() << "      " << time() << "    " << m_statisticsSampler->temperature() << "    "
+                 << m_statisticsSampler->pressure() << "  "  << m_statisticsSampler->density() << "    "
+                 << m_statisticsSampler->kineticEnergy() << "     " << m_statisticsSampler->potentialEnergy() << "      "
+                 << m_statisticsSampler->totalEnergy() << endl;
+        }
+        if (getMakeXYZ()) { movie.saveState(this); }
+    }
+    finish = clock();
+    cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
+
+    if (getMakeXYZ()) { movie.close(); }
+}
+
 void System::calculateForces() {
     resetForcesOnAllAtoms();
     m_potential->setPotentialEnergy(0.0);
     m_potential->setPressure(0.0);
+    if (getUseThermostat()) { getThermostat()->applyThermostat(m_statisticsSampler->temperature()); }
     m_potential->calculateForces();
 }
 
