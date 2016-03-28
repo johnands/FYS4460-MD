@@ -21,7 +21,9 @@ SOURCES += main.cpp \
     celllist.cpp \
     potentials/lennardjonescelllist.cpp \
     thermostats/thermostat.cpp \
-    thermostats/berendsen.cpp
+    thermostats/berendsen.cpp \
+    thermostats/andersen.cpp \
+    porosities/porosities.cpp
 
 HEADERS += \
     atom.h \
@@ -39,5 +41,7 @@ HEADERS += \
     celllist.h \
     potentials/lennardjonescelllist.h \
     thermostats/thermostat.h \
-    thermostats/berendsen.h
+    thermostats/berendsen.h \
+    thermostats/andersen.h \
+    porosities/porosities.h
 

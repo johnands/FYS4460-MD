@@ -135,6 +135,9 @@ void System::runSimulation(bool writeSampleToFile) {
     }
     double dt = getTimeStep();
 
+    // sample initial state
+    m_statisticsSampler->sample(0);
+
     cout << "Timestep Time Temperature Pressure Density KineticEnergy PotentialEnergy TotalEnergy" << endl;
 
     clock_t start, finish;
@@ -142,12 +145,14 @@ void System::runSimulation(bool writeSampleToFile) {
     for (int timeStep=0; timeStep < getNumberOfTimeSteps(); timeStep++) {
         step(dt);
         m_statisticsSampler->sample(timeStep);
-        if (this->getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(50); }
+        if (getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(50); }
         if( !(timeStep % 100) ) {
             // print sample every 100 timesteps
-            cout << steps() << "      " << time() << "    " << m_statisticsSampler->temperature() << "    "
+            cout << steps() << "      " << time() << "    "
+                 << UnitConverter::temperatureToSI(m_statisticsSampler->temperature()) << "    "
                  << m_statisticsSampler->pressure() << "  "  << m_statisticsSampler->density() << "    "
-                 << m_statisticsSampler->kineticEnergy() << "     " << m_statisticsSampler->potentialEnergy() << "      "
+                 << m_statisticsSampler->kineticEnergy() << "     "
+                 << m_statisticsSampler->potentialEnergy() << "      "
                  << m_statisticsSampler->totalEnergy() << endl;
         }
         if (getMakeXYZ()) { movie.saveState(this); }
@@ -162,12 +167,14 @@ void System::calculateForces() {
     resetForcesOnAllAtoms();
     m_potential->setPotentialEnergy(0.0);
     m_potential->setPressure(0.0);
-    if (getUseThermostat()) { getThermostat()->applyThermostat(m_statisticsSampler->temperature()); }
     m_potential->calculateForces();
 }
 
 void System::step(double dt) {
     m_integrator->integrate(this, dt);
+    if (getUseThermostat()) {
+        getThermostat()->applyThermostat(m_statisticsSampler->temperature());
+    }
     m_steps++;
     m_time += dt;
 }

@@ -4,6 +4,7 @@
 #include "integrators/eulercromer.h"
 #include "integrators/velocityverlet.h"
 #include "thermostats/berendsen.h"
+#include "thermostats/andersen.h"
 #include "system.h"
 #include "statisticssampler.h"
 #include "atom.h"
@@ -17,9 +18,10 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 8;
-    double initialTemperature = UnitConverter::temperatureFromSI(100);  // measured in Kelvin
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
+    int numberOfUnitCells = 20;
+    //double initialTemperature = UnitConverter::temperatureFromSI(300);  // measured in Kelvin
+    double initialTemperature = 0.851;
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
 
@@ -34,7 +36,7 @@ int main(int numberOfArguments, char **argumentList)
 
     bool BoltzmannDist = true;             // initial velocities given by Boltzmann distribution
     double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
-    double dtTau = 1;
+    double tau = 10*dt;
 
     System system;
     system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
@@ -43,15 +45,15 @@ int main(int numberOfArguments, char **argumentList)
     //system.setPotential(new LennardJones(system, 1.0, 1.0));
     system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
     //system.setIntegrator(new EulerCromer());
+    system.setTimeStep(dt);
     system.setIntegrator(new VelocityVerlet());
-    system.setThermostat(new Berendsen(system, initialTemperature, dtTau));
+    system.setThermostat(new Berendsen(system, initialTemperature, tau));
     system.setUseThermoStat(true);
-    system.setNumberOfTimeSteps(301);
+    system.setNumberOfTimeSteps(501);
     system.setTemperature(initialTemperature);
     system.removeTotalMomentum();
 
     system.setPeriodicBoundaries(true);
-    system.setTimeStep(dt);
     system.setRadialDistribution(false);
     system.setMakeXYZ(false);
 

@@ -7,10 +7,8 @@
 using std::cout;
 using std::endl;
 
-Berendsen::Berendsen(System &system, double temperature, double dtTau) :
-        Thermostat(system) {
-    m_temperatureHeatBath = temperature;
-    m_dtTau = dtTau;
+Berendsen::Berendsen(System &system, double temperatureHeatBath, double tau) :
+        Thermostat(system, temperatureHeatBath, tau) {
 }
 
 
@@ -19,11 +17,7 @@ void Berendsen::applyThermostat(double temperature) {
 
     // velocity scale factor
     double gamma = sqrt(1 + m_dtTau*(m_temperatureHeatBath/temperature - 1));
-
-    cout << "gamma = " << gamma << endl;
-    cout << "m_dtTAu = " << m_dtTau << endl;
-    cout << "heat bath = " << m_temperatureHeatBath << endl;
-    cout << "temp = " << temperature << endl;
+    //cout << m_dtTau << endl;
 
     // rescale all velocitites
     for (Atom *atom : m_system.atoms()) {

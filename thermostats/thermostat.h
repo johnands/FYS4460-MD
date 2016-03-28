@@ -5,7 +5,7 @@
 class Thermostat
 {
 public:
-    Thermostat(class System &system);
+    Thermostat(class System &system, double temperatureHeatBath, double tau);
     virtual void applyThermostat(double temperature) = 0;
     void setTemperatureHeatBath(double temperatureHeatBath);
     void setDtTau(double dtTau);

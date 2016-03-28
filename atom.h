@@ -11,6 +11,7 @@ private:
     std::vector<Atom *> m_neighbourList;
     vec3 m_cellIndicies;
     vec3 m_initialPosition;
+    bool m_movingAtom;
 
 public:
     vec3 position;
@@ -29,11 +30,13 @@ public:
     std::vector<Atom *> neighbourList() { return m_neighbourList; }
     vec3 cellIndicies() { return m_cellIndicies; }
     vec3 initialPosition() { return m_initialPosition; }
+    bool movingAtom() {return m_movingAtom; }
 
     // setters
     void setMass(double mass) { m_mass = mass; }
     void addToNeighbourList(Atom * atom) { m_neighbourList.push_back(atom); }
     void setCellIndicies(int i, int j, int k);
     void setIndex(int index);
+    void setMovingAtom(bool moving);
 };
 #endif

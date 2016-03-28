@@ -73,7 +73,7 @@ void StatisticsSampler::samplePotentialEnergy()
 
 void StatisticsSampler::sampleTemperature()
 {
-    m_temperature = UnitConverter::temperatureToSI( (2*m_kineticEnergy) / 3.0 );
+    m_temperature = (2*m_kineticEnergy) / 3.0;
 }
 
 void StatisticsSampler::samplePressure()

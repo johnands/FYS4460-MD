@@ -17,7 +17,6 @@ LennardJonesCellList::LennardJonesCellList(System &system, double sigma, double 
     m_cellList->setupCells();
     m_cellList->updateCells();
     m_updateLists = 0;
-    m_inverseVolume = 1.0 / ( 3 * m_system.systemSize().x()*m_system.systemSize().y()*m_system.systemSize().z() );
 }
 
 void LennardJonesCellList::calculateForces()
@@ -64,11 +63,8 @@ void LennardJonesCellList::calculateForces()
             atom1->force += forceOnAtom;
             atom2->force -= forceOnAtom;   // Newton's third law
 
-            // calculate pressure
-            vec3 Fij = atom1->force - atom2->force;
-
             // dot product of Fij and dr
-            pressure += Fij.dot(dr);
+            pressure += forceOnAtom.dot(dr);
 
             // calculate potential energy
             potentialEnergy += (dr6 - 1)*dr6;
