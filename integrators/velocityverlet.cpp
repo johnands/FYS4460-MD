@@ -16,16 +16,19 @@ void VelocityVerlet::integrate(System *system, double dt)
     }
 
     for (Atom *atom : system->atoms()) {
-        atom->velocity += atom->force*dtHalf / atom->mass();
-        atom->position += atom->velocity*dt;
+        if (atom->movingAtom()) {
+            atom->velocity += atom->force*dtHalf / atom->mass();
+            atom->position += atom->velocity*dt;
+        }
     }
-
 
     system->applyPeriodicBoundaryConditions();
     system->calculateForces();
 
     for (Atom *atom : system->atoms()) {
-        atom->velocity += atom->force*dtHalf / atom->mass();
+        if (atom->movingAtom()) {
+            atom->velocity += atom->force*dtHalf / atom->mass();
+        }
     }
 
 

@@ -1,5 +1,5 @@
 #include "porosities.h"
 
-Porosities::Porosities()
-{
+Porosities::Porosities(System &system) {
+    m_system = system;
 }

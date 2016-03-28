@@ -6,6 +6,7 @@
 
 class Potential; class Integrator;
 class Thermostat; class StatisticsSampler;
+class Porosities;
 using std::vector;
 
 class System
@@ -22,6 +23,7 @@ private:
     Potential* m_potential = nullptr;
     Integrator* m_integrator = nullptr;
     Thermostat* m_thermostat = nullptr;
+    Porosities* m_porosities = nullptr;
     StatisticsSampler* m_statisticsSampler = nullptr;
     double m_time = 0;
     int m_steps = 0;
@@ -73,6 +75,8 @@ public:
     void setStatisticsSampler(StatisticsSampler *statisticsSampler) { m_statisticsSampler = statisticsSampler; }
     Thermostat *getThermostat() { return m_thermostat; }
     void setThermostat(Thermostat *thermostat) { m_thermostat = thermostat; }
+    Porosities *getPorosities() { return m_porosities; }
+    void setPorosities(Porosities *porosities) { m_porosities = porosities; }
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
     double volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }

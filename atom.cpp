@@ -40,3 +40,7 @@ void Atom::storeInitialPosition() {
 void Atom::setIndex(int index) {
     m_index = index;
 }
+
+void Atom::setMovingAtom(bool moving) {
+    m_movingAtom = moving;
+}

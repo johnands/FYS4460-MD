@@ -32,16 +32,18 @@ void System::applyPeriodicBoundaryConditions() {
 
     // check if atoms is outside of box [0, b*Nx] x [0, b*Ny] x [0, b*Nz]
     for (Atom *atom : m_atoms) {
+        if (atom->movingAtom()) {
 
-        // is position less than zero?
-        if (atom->position.x() < 0) { atom->position[0] += m_systemSize.x(); }
-        if (atom->position.y() < 0) { atom->position[1] += m_systemSize.y(); }
-        if (atom->position.z() < 0) { atom->position[2] += m_systemSize.z(); }
+            // is position less than zero?
+            if (atom->position.x() < 0) { atom->position[0] += m_systemSize.x(); }
+            if (atom->position.y() < 0) { atom->position[1] += m_systemSize.y(); }
+            if (atom->position.z() < 0) { atom->position[2] += m_systemSize.z(); }
 
-        // is position more than b*N?
-        if (atom->position.x() > m_systemSize.x()) { atom->position[0] -= m_systemSize.x(); }
-        if (atom->position.y() > m_systemSize.y()) { atom->position[1] -= m_systemSize.y(); }
-        if (atom->position.z() > m_systemSize.z()) { atom->position[2] -= m_systemSize.z(); }
+            // is position more than b*N?
+            if (atom->position.x() > m_systemSize.x()) { atom->position[0] -= m_systemSize.x(); }
+            if (atom->position.y() > m_systemSize.y()) { atom->position[1] -= m_systemSize.y(); }
+            if (atom->position.z() > m_systemSize.z()) { atom->position[2] -= m_systemSize.z(); }
+        }
     }
 }
 

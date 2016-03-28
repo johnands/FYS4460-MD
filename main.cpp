@@ -5,6 +5,7 @@
 #include "integrators/velocityverlet.h"
 #include "thermostats/berendsen.h"
 #include "thermostats/andersen.h"
+#include "porosities/centeredcylinder.h"
 #include "system.h"
 #include "statisticssampler.h"
 #include "atom.h"
@@ -49,6 +50,7 @@ int main(int numberOfArguments, char **argumentList)
     system.setIntegrator(new VelocityVerlet());
     system.setThermostat(new Berendsen(system, initialTemperature, tau));
     system.setUseThermoStat(true);
+    system.setPorosities(new CenteredCylinder(system));
     system.setNumberOfTimeSteps(501);
     system.setTemperature(initialTemperature);
     system.removeTotalMomentum();

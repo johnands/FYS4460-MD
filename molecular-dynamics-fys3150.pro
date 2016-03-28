@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     thermostats/thermostat.cpp \
     thermostats/berendsen.cpp \
     thermostats/andersen.cpp \
-    porosities/porosities.cpp
+    porosities/porosities.cpp \
+    porosities/centeredcylinder.cpp
 
 HEADERS += \
     atom.h \
@@ -43,5 +44,6 @@ HEADERS += \
     thermostats/thermostat.h \
     thermostats/berendsen.h \
     thermostats/andersen.h \
-    porosities/porosities.h
+    porosities/porosities.h \
+    porosities/centeredcylinder.h
 
