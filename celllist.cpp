@@ -8,17 +8,17 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-CellList::CellList(System &system, double cutOffDistance) {
+CellList::CellList(System *system, double cutOffDistance) {
     m_cutOffDistance = cutOffDistance;
     m_system = system;
 }
 
 void CellList::setupCells() {
 
-    m_numberOfCellsEachDimension = m_system.systemSize().x() / m_cutOffDistance;
+    m_numberOfCellsEachDimension = m_system->systemSize().x() / m_cutOffDistance;
     if (m_numberOfCellsEachDimension < 1.0) { m_numberOfCellsEachDimension = 1.0; }
 
-    cout << "system size: " << m_system.systemSize().x() << endl;
+    cout << "system size: " << m_system->systemSize().x() << endl;
     cout << "cutoff: " << m_cutOffDistance << endl;
     cout << "number of cells: " << m_numberOfCellsEachDimension << endl;
 
@@ -28,17 +28,15 @@ void CellList::setupCells() {
                     vector<vector<Atom*>> (m_numberOfCellsEachDimension,
                     vector<Atom*> ())) );
 
-    m_neighbours.resize(m_system.atoms().size());
+    m_neighbours.resize(m_system->atoms().size());
 }
 
 
 void CellList::updateCells() {
     // set up cell lists as a four-dimensional std vector
-    vec3 systemSize = m_system.systemSize();
-    cout << "yes" << endl;
-    cout << m_system.atoms().size() << endl;
+    vec3 systemSize = m_system->systemSize();
 
-    for (Atom *atom : m_system.atoms()) {
+    for (Atom *atom : m_system->atoms()) {
 
         // find which cell the atom is in
         int i = atom->position.x() / systemSize.x() * m_numberOfCellsEachDimension;
@@ -87,8 +85,8 @@ void CellList::updateCells() {
 
                                     // apply periodic boundary conditions
                                     for (int dim=0; dim < 3; dim++) {
-                                        if (dr[dim] > m_system.systemSizeHalf()[dim]) { dr[dim] -= m_system.systemSize()[dim]; }
-                                        else if (dr[dim] < -m_system.systemSizeHalf()[dim]) { dr[dim] += m_system.systemSize()[dim]; }
+                                        if (dr[dim] > m_system->systemSizeHalf()[dim]) { dr[dim] -= m_system->systemSize()[dim]; }
+                                        else if (dr[dim] < -m_system->systemSizeHalf()[dim]) { dr[dim] += m_system->systemSize()[dim]; }
                                     }
 
                                     // add atom2 to atom1 neighbour list if distance is shorter than cut-off distance
@@ -116,9 +114,9 @@ void CellList::clearCells() {
             }  
         }
     }
-    /*for (int l=0; l < m_system.atoms().size(); l++) {
-        m_system.atoms()[l]->neighbourList().clear();*/
-    for (int l = 0; l < m_system.atoms().size(); l++) {
+    /*for (int l=0; l < m_system->atoms().size(); l++) {
+        m_system->atoms()[l]->neighbourList().clear();*/
+    for (int l = 0; l < m_system->atoms().size(); l++) {
         m_neighbours[l].clear();
     }
 }

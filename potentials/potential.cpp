@@ -1,8 +1,8 @@
 #include "potential.h"
 
-Potential::Potential(System &system) {
+Potential::Potential(System *system) {
     m_system = system;
-    m_inverseVolume = 1.0 / ( 3 * m_system.systemSize().x()*m_system.systemSize().y()*m_system.systemSize().z() );
+    m_inverseVolume = 1.0 / ( 3 * m_system->systemSize().x()*m_system->systemSize().y()*m_system->systemSize().z() );
 }
 
 double Potential::potentialEnergy() {

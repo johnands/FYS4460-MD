@@ -5,9 +5,9 @@
 class VelocityVerlet : public Integrator
 {
 public:
-    VelocityVerlet() { }
+    VelocityVerlet(System *system);
     ~VelocityVerlet() { }
-    virtual void integrate(System *system, double dt) override;
+    virtual void integrate(double dt) override;
 
 private:
     bool m_firstStep = true;

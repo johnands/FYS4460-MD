@@ -1,13 +1,19 @@
 #include "eulercromer.h"
 #include "../system.h"
 
-void EulerCromer::integrate(System *system, double dt)
+EulerCromer::EulerCromer(System *system) :
+    Integrator(system) {
+
+}
+
+
+void EulerCromer::integrate(double dt)
 {
-    system->calculateForces();
-    for (Atom *atom : system->atoms()) {
+    m_system->calculateForces();
+    for (Atom *atom : m_system->atoms()) {
         atom->velocity += atom->force*dt / atom->mass();
         atom->position += atom->velocity*dt;
     }
 
-    system->applyPeriodicBoundaryConditions();
+    m_system->applyPeriodicBoundaryConditions();
 }

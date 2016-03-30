@@ -8,7 +8,7 @@ using std::vector;
 class CellList {
 
 public:
-    CellList(class System &system, double cutOffDistance);
+    CellList(class System *system, double cutOffDistance);
     void setupCells();
     void updateCells();
     void clearCells();
@@ -20,7 +20,7 @@ private:
     vector<vector<class Atom*>> m_neighbours;
     int m_numberOfCellsEachDimension;
     double m_cutOffDistance;
-    class System m_system;
+    class System *m_system = nullptr;
 };
 
 #endif // CELLLIST_H

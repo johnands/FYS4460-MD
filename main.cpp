@@ -40,30 +40,30 @@ int main(int numberOfArguments, char **argumentList)
     double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
     double tau = 10*dt;
 
-    System system;
-    system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
+    System *system = new System();
+    system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
                             mass, BoltzmannDist, maxMinVelocity);
+    system->setPores(new Spheres(system));
 
-    //system.setPotential(new LennardJones(system, 1.0, 1.0));
-    system.setPores(new Spheres(system));
-    system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
-    //system.setIntegrator(new EulerCromer());
-    system.setTimeStep(dt);
-    system.setIntegrator(new VelocityVerlet());
-    system.setThermostat(new Berendsen(system, initialTemperature, tau));
-    system.setUseThermoStat(false);
+    //system->setPotential(new LennardJones(system, 1.0, 1.0));
+    system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
+    //system->setIntegrator(new EulerCromer(system));
+    system->setTimeStep(dt);
+    system->setIntegrator(new VelocityVerlet(system));
+    system->setThermostat(new Berendsen(system, initialTemperature, tau));
+    system->setUseThermoStat(false);
 
-    system.setNumberOfTimeSteps(10);
-    system.setTemperature(initialTemperature);
-    system.removeTotalMomentum();
+    system->setNumberOfTimeSteps(1001);
+    system->setTemperature(initialTemperature);
+    system->removeTotalMomentum();
 
-    system.setPeriodicBoundaries(true);
-    system.setWriteSample(false);
-    system.setRadialDistribution(false);
-    system.setMakeXYZ(true);
-    system.setXYZName("testSegFault.xyz");
+    //system->setPeriodicBoundaries(true);
+    system->setWriteSample(true);
+    system->setRadialDistribution(false);
+    system->setMakeXYZ(false);
+    system->setXYZName("test.xyz");
 
-    system.runSimulation();
+    system->runSimulation();
 
     return 0;
 }

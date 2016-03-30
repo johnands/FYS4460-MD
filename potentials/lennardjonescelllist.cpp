@@ -6,7 +6,7 @@
 using std::cout;
 using std::endl;
 
-LennardJonesCellList::LennardJonesCellList(System &system, double sigma, double epsilon, double cutOffDistance) :
+LennardJonesCellList::LennardJonesCellList(System *system, double sigma, double epsilon, double cutOffDistance) :
     Potential (system),
     m_sigma(sigma),
     m_epsilon(epsilon),
@@ -33,13 +33,14 @@ void LennardJonesCellList::calculateForces()
 
     m_updateLists++;
 
-    for (int i=0; i < m_system.atoms().size(); i++) {
-        Atom *atom1 = m_system.atoms()[i];
+    for (int i=0; i < m_system->atoms().size(); i++) {
+        Atom *atom1 = m_system->atoms()[i];
         vec3 dr, forceOnAtom, cell;
         double dr6, dr2;
 
         //cout << "neighbour size: " << atom1->neighbourList().size() << endl;
         //cout << "Neighbour size: " << m_cellList->getNeighbours()[i].size() << endl;
+
         // loop over all atoms in atom1's neighbour list
         //for (int j=0; j < atom1->neighbourList().size(); j++) {
         for (int j=0; j < m_cellList->getNeighbours()[i].size(); j++) {
@@ -52,8 +53,8 @@ void LennardJonesCellList::calculateForces()
 
             // make sure we're using shortest distance component-wise (periodic boundary conditions)
             for (int dim=0; dim < 3; dim++) {
-                if (dr[dim] > m_system.systemSizeHalf()[dim]) { dr[dim] -= m_system.systemSize()[dim]; }
-                else if (dr[dim] < -m_system.systemSizeHalf()[dim]) { dr[dim] += m_system.systemSize()[dim]; }
+                if (dr[dim] > m_system->systemSizeHalf()[dim]) { dr[dim] -= m_system->systemSize()[dim]; }
+                else if (dr[dim] < -m_system->systemSizeHalf()[dim]) { dr[dim] += m_system->systemSize()[dim]; }
             }
 
             // calculate force
@@ -61,7 +62,6 @@ void LennardJonesCellList::calculateForces()
             dr2 = 1.0 / dr.lengthSquared();
             forceOnAtom = 24*dr6*(2*dr6 - 1)*dr2*dr;
 
-            //cout << forceOnAtom << endl;
             // add contribution to force on atom i and j
             atom1->force += forceOnAtom;
             atom2->force -= forceOnAtom;   // Newton's third law

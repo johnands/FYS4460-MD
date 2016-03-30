@@ -5,9 +5,12 @@ class System;
 class Integrator
 {
 public:
-    Integrator();
+    Integrator(System *system);
     virtual ~Integrator() { }
-    virtual void integrate(System* system, double timestep) = 0;
+    virtual void integrate(double dt) = 0;
+
+protected:
+    System *m_system = nullptr;
 };
 
 #endif

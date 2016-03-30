@@ -5,7 +5,7 @@
 
 class Spheres : public Porosities {
 public:
-    Spheres(System &system);
+    Spheres(System *system);
     void makePores();
 
 private:

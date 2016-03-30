@@ -6,7 +6,7 @@
 
 class Andersen : public Thermostat {
 public:
-    Andersen(class System &System, double temperature, double dtTau);
+    Andersen(class System *System, double temperature, double dtTau);
     void applyThermostat(double temperature);
 
 private:

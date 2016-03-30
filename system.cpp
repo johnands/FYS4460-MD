@@ -175,7 +175,7 @@ void System::calculateForces() {
 }
 
 void System::step(double dt) {
-    m_integrator->integrate(this, dt);
+    m_integrator->integrate(dt);
     if (getUseThermostat()) {
         getThermostat()->applyThermostat(m_statisticsSampler->temperature());
     }

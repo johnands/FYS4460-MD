@@ -11,9 +11,9 @@ protected:
     double m_potentialEnergy = 0;
     double m_pressure = 0;
     double m_inverseVolume;
-    class System m_system;
+    class System *m_system = nullptr;
 public:
-    Potential(class System &system);
+    Potential(class System *system);
     virtual ~Potential() {}
     virtual void calculateForces() = 0;
     double potentialEnergy();

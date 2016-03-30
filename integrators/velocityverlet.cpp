@@ -5,27 +5,33 @@
 using std::cout;
 using std::endl;
 
-void VelocityVerlet::integrate(System *system, double dt)
+
+VelocityVerlet::VelocityVerlet(System *system) :
+    Integrator(system) {
+
+}
+
+void VelocityVerlet::integrate(double dt)
 {
     double dtHalf = dt/2.0;
 
     // calculate forces on initial state
     if (m_firstStep) {
-        system->calculateForces();
+        m_system->calculateForces();
         m_firstStep = false;
     }
 
-    for (Atom *atom : system->atoms()) {
+    for (Atom *atom : m_system->atoms()) {
         if (atom->movingAtom()) {
             atom->velocity += atom->force*dtHalf / atom->mass();
             atom->position += atom->velocity*dt;
         }
     }
 
-    system->applyPeriodicBoundaryConditions();
-    system->calculateForces();
+    m_system->applyPeriodicBoundaryConditions();
+    m_system->calculateForces();
 
-    for (Atom *atom : system->atoms()) {
+    for (Atom *atom : m_system->atoms()) {
         if (atom->movingAtom()) {
             atom->velocity += atom->force*dtHalf / atom->mass();
         }
