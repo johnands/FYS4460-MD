@@ -1,2 +1,2 @@
-molecular-dynamics-fys3150
-==========================
+FYS4460 Unordered Systems and Percolation
+Molecular dynamics
