@@ -31,7 +31,7 @@ private:
     double m_meanSquareDisplacement = 0;
 
 public:
-    StatisticsSampler(System *system, bool writeSampleToFile);
+    StatisticsSampler(System *system);
     void saveToFile(int timeStep);
     void sample(int timeStep);
     void sampleKineticEnergy();

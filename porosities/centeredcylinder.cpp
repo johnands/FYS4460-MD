@@ -16,8 +16,10 @@ void CenteredCylinder::makePores() {
 
         if (distanceFromCenter > m_poreRadius) {
             atom->setMovingAtom(false);
+            atom->setName("NM");
         }
-
     }
-
+    computePorosity();
+    halfDensity();
 }
+

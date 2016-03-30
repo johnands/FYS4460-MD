@@ -10,10 +10,10 @@
 
 using namespace std;
 
-StatisticsSampler::StatisticsSampler(System *system, bool writeSampleToFile)
+StatisticsSampler::StatisticsSampler(System *system)
 {
     m_system = system;
-    m_writeSampleToFile = writeSampleToFile;
+    m_writeSampleToFile = m_system->getWriteSample();
     m_systemSize = m_system->systemSize().x();
     m_numberOfAtoms = m_system->atoms().size();
 }
@@ -53,7 +53,7 @@ void StatisticsSampler::sample(int timeStep)
     sampleTemperature();
     sampleDensity();
     samplePressure();
-    sampleMeanSquareDisplacement();
+    //sampleMeanSquareDisplacement();
     if (m_writeSampleToFile) { saveToFile(timeStep); }
 }
 

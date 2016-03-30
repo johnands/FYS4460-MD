@@ -7,6 +7,7 @@
 class Potential; class Integrator;
 class Thermostat; class StatisticsSampler;
 class Porosities;
+
 using std::vector;
 
 class System
@@ -18,12 +19,16 @@ private:
     bool m_makeXYZ;
     bool m_radialDistribution;
     bool m_useThermostat;
+    bool m_usePores;
+    bool m_writeSample;
+    const char *m_XYZName;
+    double m_porosity;
     double m_temperature;
     vector<Atom*> m_atoms;
     Potential* m_potential = nullptr;
     Integrator* m_integrator = nullptr;
     Thermostat* m_thermostat = nullptr;
-    Porosities* m_porosities = nullptr;
+    Porosities* m_pores = nullptr;
     StatisticsSampler* m_statisticsSampler = nullptr;
     double m_time = 0;
     int m_steps = 0;
@@ -41,11 +46,13 @@ public:
     void removeTotalMomentum();
     void calculateForces();
     void step(double dt);
-    void runSimulation(bool writeSampleToFile);
+    void runSimulation();
+    void removeAtom(int index);
 
 
     // Setters and getters
     vector<Atom *>& atoms() { return m_atoms; } // Returns a reference to the std::vector of atom pointers
+    void setAtoms(vector<Atom *>& atoms) { m_atoms = atoms; }
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     vec3 systemSizeHalf() { return m_systemSizeHalf; }
@@ -60,6 +67,10 @@ public:
     bool getRadialDistribution() { return m_radialDistribution; }
     void setUseThermoStat(bool useThermostat) { m_useThermostat = useThermostat; }
     bool getUseThermostat() { return m_useThermostat; }
+    void setWriteSample(bool writeSample) { m_writeSample = writeSample; }
+    bool getWriteSample() { return m_writeSample; }
+    void setXYZName(const char *filename) { m_XYZName = filename; }
+    const char *getXYZName() { return m_XYZName; }
     void setTemperature(double temperature) { m_temperature = temperature; }
     double getTemperature() { return m_temperature; }
 
@@ -75,8 +86,10 @@ public:
     void setStatisticsSampler(StatisticsSampler *statisticsSampler) { m_statisticsSampler = statisticsSampler; }
     Thermostat *getThermostat() { return m_thermostat; }
     void setThermostat(Thermostat *thermostat) { m_thermostat = thermostat; }
-    Porosities *getPorosities() { return m_porosities; }
-    void setPorosities(Porosities *porosities) { m_porosities = porosities; }
+    Porosities *getPores() { return m_pores; }
+    void setPores(Porosities *porosities) { m_pores = porosities; }
+    double getPorosity() { return m_porosity; }
+    void setPorosity(double porosity) { m_porosity = porosity; }
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
     double volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }

@@ -41,6 +41,14 @@ void Atom::setIndex(int index) {
     m_index = index;
 }
 
+void Atom::adjustIndex(int change) {
+    m_index += change;
+}
+
 void Atom::setMovingAtom(bool moving) {
     m_movingAtom = moving;
+}
+
+void Atom::setName(const char *name) {
+    m_name = name;
 }

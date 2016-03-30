@@ -24,11 +24,14 @@ void LennardJonesCellList::calculateForces()
     double potentialEnergy = 0;
     double pressure = 0;
 
-    m_cellList->clearCells();
-    m_cellList->updateCells();
+    // update lists every 5th time step
+    if (m_updateLists==5) {
+        m_cellList->clearCells();
+        m_cellList->updateCells();
+        m_updateLists = 0;
+    }
 
-    // update lists every 10th time step
-
+    m_updateLists++;
 
     for (int i=0; i < m_system.atoms().size(); i++) {
         Atom *atom1 = m_system.atoms()[i];

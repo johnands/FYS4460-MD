@@ -6,6 +6,7 @@
 #include "thermostats/berendsen.h"
 #include "thermostats/andersen.h"
 #include "porosities/centeredcylinder.h"
+#include "porosities/spheres.h"
 #include "system.h"
 #include "statisticssampler.h"
 #include "atom.h"
@@ -21,7 +22,7 @@ int main(int numberOfArguments, char **argumentList)
 {
     int numberOfUnitCells = 20;
     //double initialTemperature = UnitConverter::temperatureFromSI(300);  // measured in Kelvin
-    double initialTemperature = 0.851;
+    double initialTemperature = 1.05;
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
@@ -44,52 +45,25 @@ int main(int numberOfArguments, char **argumentList)
                             mass, BoltzmannDist, maxMinVelocity);
 
     //system.setPotential(new LennardJones(system, 1.0, 1.0));
+    system.setPores(new Spheres(system));
     system.setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
     //system.setIntegrator(new EulerCromer());
     system.setTimeStep(dt);
     system.setIntegrator(new VelocityVerlet());
     system.setThermostat(new Berendsen(system, initialTemperature, tau));
-    system.setUseThermoStat(true);
-    system.setPorosities(new CenteredCylinder(system));
-    system.setNumberOfTimeSteps(501);
+    system.setUseThermoStat(false);
+
+    system.setNumberOfTimeSteps(10);
     system.setTemperature(initialTemperature);
     system.removeTotalMomentum();
 
     system.setPeriodicBoundaries(true);
+    system.setWriteSample(false);
     system.setRadialDistribution(false);
-    system.setMakeXYZ(false);
+    system.setMakeXYZ(true);
+    system.setXYZName("testSegFault.xyz");
 
-    system.runSimulation(false);
-
-    /*
-    StatisticsSampler statisticsSampler(system, writeSampleToFile);
-    IO movie; // To write the state to file
-    movie.open("animateVelocityDist.xyz");
-
-    cout << "Timestep Time Temperature Pressure Density KineticEnergy PotentialEnergy TotalEnergy" << endl;
-
-    // sample initial state
-    movie.saveState(&system);
-
-    clock_t start, finish;
-    start = clock();
-    for (int timestep=0; timestep < 501; timestep++) {
-        system.step(dt);
-        statisticsSampler.sample(timestep);
-        //statisticsSampler.sampleRadialDistribution(50);
-        if( !(timestep % 100) ) {
-            // print the timestep every 100 timesteps
-            cout << system.steps() << "      " << system.time() << "    " << statisticsSampler.temperature() << "    "
-                 << statisticsSampler.pressure() << "  "  << statisticsSampler.density() << "    "
-                 << statisticsSampler.kineticEnergy() << "     " << statisticsSampler.potentialEnergy() << "      "
-                 << statisticsSampler.totalEnergy() << endl;
-        }
-        movie.saveState(&system);
-    }
-    finish = clock();
-    cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
-
-    movie.close();*/
+    system.runSimulation();
 
     return 0;
 }

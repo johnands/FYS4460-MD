@@ -125,13 +125,13 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
     }
 }
 
-void System::runSimulation(bool writeSampleToFile) {
+void System::runSimulation() {
 
-    m_statisticsSampler =  new StatisticsSampler(this, writeSampleToFile);
+    m_statisticsSampler =  new StatisticsSampler(this);
     IO movie; // To write the state to file
 
     if (getMakeXYZ()) {
-        movie.open("animateVelocityDist.xyz");
+        movie.open(getXYZName());
         // sample initial state
         movie.saveState(this);
     }
@@ -148,7 +148,7 @@ void System::runSimulation(bool writeSampleToFile) {
         step(dt);
         m_statisticsSampler->sample(timeStep);
         if (getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(50); }
-        if( !(timeStep % 100) ) {
+        if ( !(timeStep % 100) ) {
             // print sample every 100 timesteps
             cout << steps() << "      " << time() << "    "
                  << UnitConverter::temperatureToSI(m_statisticsSampler->temperature()) << "    "
@@ -157,7 +157,9 @@ void System::runSimulation(bool writeSampleToFile) {
                  << m_statisticsSampler->potentialEnergy() << "      "
                  << m_statisticsSampler->totalEnergy() << endl;
         }
-        if (getMakeXYZ()) { movie.saveState(this); }
+        if ( !(timeStep % 10) || timeStep == 0 ) {
+            if (getMakeXYZ()) { movie.saveState(this); }
+        }
     }
     finish = clock();
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
@@ -179,4 +181,14 @@ void System::step(double dt) {
     }
     m_steps++;
     m_time += dt;
+}
+
+void System::removeAtom(int index) {
+    //cout << m_atoms.size() << endl;
+    m_atoms.erase(m_atoms.begin() + index);
+    //cout << m_atoms.size() << endl;
+    for (int i=index; i < m_atoms.size(); i++) {
+        m_atoms[i]->adjustIndex(-1);
+    }
+    //setAtoms(m_atoms);
 }

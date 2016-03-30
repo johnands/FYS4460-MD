@@ -35,6 +35,8 @@ void CellList::setupCells() {
 void CellList::updateCells() {
     // set up cell lists as a four-dimensional std vector
     vec3 systemSize = m_system.systemSize();
+    cout << "yes" << endl;
+    cout << m_system.atoms().size() << endl;
 
     for (Atom *atom : m_system.atoms()) {
 
@@ -43,9 +45,11 @@ void CellList::updateCells() {
         int j = atom->position.y() / systemSize.y() * m_numberOfCellsEachDimension;
         int k = atom->position.z() / systemSize.z() * m_numberOfCellsEachDimension;
 
-        //cout << "i: " << i << endl;
-        //cout << "j: " << j << endl;
-        //cout << "k: " << k << endl;
+        /*
+        cout << "i: " << i << endl;
+        cout << "j: " << j << endl;
+        cout << "k: " << k << endl;
+        */
 
         // set cell indicies
         atom->setCellIndicies(i, j, k);
