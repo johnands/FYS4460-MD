@@ -29,8 +29,10 @@ def extract(filename):
 
 def treatData():
     radialDistribution, bins, numberOfBins = extract('radialDistribution.txt')
+    print numberOfBins
 
     numberOfTimeSteps = len(radialDistribution) / len(bins)
+    binSize = bins[1] - bins[0]
 
 
     # find time average of radial distribution

@@ -151,7 +151,7 @@ void System::runSimulation() {
         if ( !(timeStep % 100) ) {
             // print sample every 100 timesteps
             cout << steps() << "      " << time() << "    "
-                 << UnitConverter::temperatureToSI(m_statisticsSampler->temperature()) << "    "
+                 << m_statisticsSampler->temperature() << "    "
                  << m_statisticsSampler->pressure() << "  "  << m_statisticsSampler->density() << "    "
                  << m_statisticsSampler->kineticEnergy() << "     "
                  << m_statisticsSampler->potentialEnergy() << "      "
@@ -176,7 +176,7 @@ void System::calculateForces() {
 
 void System::step(double dt) {
     m_integrator->integrate(dt);
-    if (getUseThermostat()) {
+    if (getUseThermostat() && m_steps < getThermalization()) {
         getThermostat()->applyThermostat(m_statisticsSampler->temperature());
     }
     m_steps++;
@@ -184,11 +184,8 @@ void System::step(double dt) {
 }
 
 void System::removeAtom(int index) {
-    //cout << m_atoms.size() << endl;
     m_atoms.erase(m_atoms.begin() + index);
-    //cout << m_atoms.size() << endl;
     for (int i=index; i < m_atoms.size(); i++) {
         m_atoms[i]->adjustIndex(-1);
     }
-    //setAtoms(m_atoms);
 }

@@ -22,7 +22,7 @@ void StatisticsSampler::saveToFile(int timeStep)
 {
 
     if (m_initialSample) {
-        m_outFile.open("HalfDensityFluid.txt", fstream::out | fstream::trunc);
+        m_outFile.open("argonGasNc10T420Nt501.txt", fstream::out | fstream::trunc);
         m_outFile << setw(12) << "Time step"   << " ";
         m_outFile << setw(12) << "Kinetic"     << " ";
         m_outFile << setw(12) << "Potential"   << " ";
@@ -34,15 +34,15 @@ void StatisticsSampler::saveToFile(int timeStep)
         m_outFile.close();
     }
 
-    m_outFile.open("HalfDensityFluid.txt", fstream::out | fstream::app);
+    m_outFile.open("argonGasNc10T420Nt501.txt", fstream::out | fstream::app);
 
     m_outFile << setw(12) << setprecision(7) << timeStep  << " ";
     m_outFile << setw(12) << setprecision(7) << m_kineticEnergy   << " ";
     m_outFile << setw(12) << setprecision(7) << m_potentialEnergy << " ";
     m_outFile << setw(12) << setprecision(7) << totalEnergy()     << " ";
     m_outFile << setw(12) << setprecision(7) << m_temperature     << " ";
-    m_outFile << setw(12) << setprecision(7) << m_pressure        << " ";
-    m_outFile << setw(12) << setprecision(7) << m_meanSquareDisplacement << endl;
+    m_outFile << setw(12) << setprecision(7) << m_pressure        << endl;
+    //m_outFile << setw(12) << setprecision(7) << m_meanSquareDisplacement << endl;
     m_outFile.close();
 }
 

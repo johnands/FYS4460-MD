@@ -20,6 +20,7 @@ void Spheres::makePores() {
 
         // random radius 2nm-3nm
         double sphereRadius = m_radius0 + Random::nextDouble()*(m_radius1 - m_radius0);
+        std::cout << sphereRadius << std::endl;
 
         // freeze all atoms inside sphere
         for (Atom *atom : m_system->atoms()) {
@@ -27,6 +28,7 @@ void Spheres::makePores() {
             double distanceFromCenter = dr.length();
 
             if (distanceFromCenter < sphereRadius) {
+                std::cout << "yes" << std::endl;
                 atom->setMovingAtom(false);
                 atom->setName("NM");
             }

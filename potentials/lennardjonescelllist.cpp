@@ -38,11 +38,7 @@ void LennardJonesCellList::calculateForces()
         vec3 dr, forceOnAtom, cell;
         double dr6, dr2;
 
-        //cout << "neighbour size: " << atom1->neighbourList().size() << endl;
-        //cout << "Neighbour size: " << m_cellList->getNeighbours()[i].size() << endl;
-
         // loop over all atoms in atom1's neighbour list
-        //for (int j=0; j < atom1->neighbourList().size(); j++) {
         for (int j=0; j < m_cellList->getNeighbours()[i].size(); j++) {
 
             //Atom *atom2 = atom1->neighbourList()[j];
@@ -65,6 +61,10 @@ void LennardJonesCellList::calculateForces()
             // add contribution to force on atom i and j
             atom1->force += forceOnAtom;
             atom2->force -= forceOnAtom;   // Newton's third law
+
+            if (m_system->getUseExternalForce()) {
+                atom1->force[0] += 0.1;
+            }
 
             // dot product of Fij and dr
             pressure += forceOnAtom.dot(dr);

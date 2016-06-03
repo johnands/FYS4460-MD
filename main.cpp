@@ -20,10 +20,11 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 20;
-    //double initialTemperature = UnitConverter::temperatureFromSI(300);  // measured in Kelvin
-    double initialTemperature = 1.05;
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
+    int numberOfUnitCells = 10;
+    double initialTemperature = UnitConverter::temperatureFromSI(50);  // measured in Kelvin
+    //double initialTemperature = 1.0;
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
+    cout << "lattice: " << latticeConstant << endl;
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
 
@@ -43,25 +44,27 @@ int main(int numberOfArguments, char **argumentList)
     System *system = new System();
     system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
                             mass, BoltzmannDist, maxMinVelocity);
-    system->setPores(new Spheres(system));
+    //system->setPores(new Spheres(system));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
     system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
-    system->setThermostat(new Berendsen(system, initialTemperature, tau));
+    //system->setThermostat(new Berendsen(system, initialTemperature, tau));
     system->setUseThermoStat(false);
+    system->setThermalization(1001);
 
     system->setNumberOfTimeSteps(1001);
     system->setTemperature(initialTemperature);
     system->removeTotalMomentum();
 
     //system->setPeriodicBoundaries(true);
-    system->setWriteSample(true);
+    system->setUseExternalForce(false);
+    system->setWriteSample(false);
     system->setRadialDistribution(false);
-    system->setMakeXYZ(false);
-    system->setXYZName("test.xyz");
+    system->setMakeXYZ(true);
+    system->setXYZName("argonSolidNc10T50Nt1001.xyz");
 
     system->runSimulation();
 

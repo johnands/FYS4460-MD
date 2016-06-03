@@ -9,7 +9,8 @@ public:
     void makePores();
 
 private:
-    const double m_poreRadius = UnitConverter::lengthFromSI(2e-9);
+    const double m_poreRadius = 2e-9/1e-10;
+
 };
 
 #endif // CENTEREDCYLINDER_H

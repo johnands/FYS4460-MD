@@ -21,6 +21,8 @@ private:
     bool m_useThermostat;
     bool m_usePores;
     bool m_writeSample;
+    bool m_useExternalForce = false;
+    int m_thermalization;
     const char *m_XYZName;
     double m_porosity;
     double m_temperature;
@@ -71,8 +73,12 @@ public:
     bool getWriteSample() { return m_writeSample; }
     void setXYZName(const char *filename) { m_XYZName = filename; }
     const char *getXYZName() { return m_XYZName; }
+    void setUseExternalForce(bool useExternalForce) { m_useExternalForce = useExternalForce; }
+    bool getUseExternalForce() { return m_useExternalForce; }
     void setTemperature(double temperature) { m_temperature = temperature; }
     double getTemperature() { return m_temperature; }
+    void setThermalization(int thermalization) { m_thermalization = thermalization; }
+    int getThermalization() { return m_thermalization; }
 
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
