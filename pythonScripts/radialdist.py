@@ -28,12 +28,11 @@ def extract(filename):
 
 
 def treatData():
-    radialDistribution, bins, numberOfBins = extract('radialDistribution.txt')
-    print numberOfBins
+    radialDistribution, bins, numberOfBins = extract('radDistNc10T84Nt1001bins30.txt')
+    latticeConstant = 1.54479		# in MD units 	
+    bins /= latticeConstant
 
     numberOfTimeSteps = len(radialDistribution) / len(bins)
-    binSize = bins[1] - bins[0]
-
 
     # find time average of radial distribution
     cumulativeRadialDistribution = np.zeros(numberOfBins)
@@ -45,6 +44,9 @@ def treatData():
     radialDistTimeAverage = cumulativeRadialDistribution / numberOfTimeSteps
 
     plt.plot(bins, radialDistTimeAverage, 'b-', bins, np.zeros(numberOfBins)+1, 'r-')
+    plt.xlabel("r/b", fontsize=20)
+    plt.ylabel("g(r/b)", fontsize=20)
+    plt.title(r'Radial distribution function for liquid Argon, $N_c = 10$', fontsize=20)
     plt.show()
     
 

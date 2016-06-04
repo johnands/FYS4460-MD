@@ -15,12 +15,12 @@ class System
 private:
     vec3 m_systemSize;
     vec3 m_systemSizeHalf;
-    bool m_periodicBoundaries;
-    bool m_makeXYZ;
-    bool m_radialDistribution;
-    bool m_useThermostat;
-    bool m_usePores;
-    bool m_writeSample;
+    bool m_periodicBoundaries = true;
+    bool m_makeXYZ = false;
+    bool m_radialDistribution = false;
+    bool m_useThermostat = false;
+    bool m_usePores = false;
+    bool m_writeSample = false;
     bool m_useExternalForce = false;
     int m_thermalization;
     const char *m_XYZName;

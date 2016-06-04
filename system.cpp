@@ -70,7 +70,8 @@ void System::resetForcesOnAllAtoms() {
     }
 }
 
-void System::createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature, double mass,
+void System::createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant, double temperature,
+                              double mass,
                               bool BoltzmannDist, double maxMinVelocity) {
 
     double lc = latticeConstant;
@@ -147,7 +148,7 @@ void System::runSimulation() {
     for (int timeStep=0; timeStep < getNumberOfTimeSteps(); timeStep++) {
         step(dt);
         m_statisticsSampler->sample(timeStep);
-        if (getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(50); }
+        if (getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(30); }
         if ( !(timeStep % 100) ) {
             // print sample every 100 timesteps
             cout << steps() << "      " << time() << "    "

@@ -22,7 +22,7 @@ void StatisticsSampler::saveToFile(int timeStep)
 {
 
     if (m_initialSample) {
-        m_outFile.open("argonGasNc10T420Nt501.txt", fstream::out | fstream::trunc);
+        m_outFile.open("argonGasNc10T300Nt1001Berendsen.txt", fstream::out | fstream::trunc);
         m_outFile << setw(12) << "Time step"   << " ";
         m_outFile << setw(12) << "Kinetic"     << " ";
         m_outFile << setw(12) << "Potential"   << " ";
@@ -34,7 +34,7 @@ void StatisticsSampler::saveToFile(int timeStep)
         m_outFile.close();
     }
 
-    m_outFile.open("argonGasNc10T420Nt501.txt", fstream::out | fstream::app);
+    m_outFile.open("argonGasNc10T300Nt1001Berendsen.txt", fstream::out | fstream::app);
 
     m_outFile << setw(12) << setprecision(7) << timeStep  << " ";
     m_outFile << setw(12) << setprecision(7) << m_kineticEnergy   << " ";
@@ -99,7 +99,7 @@ void StatisticsSampler::sampleMeanSquareDisplacement()
 void StatisticsSampler::sampleRadialDistribution(int numberOfBins) {
     if (m_firstRadial) {
 
-        m_radialDistFile.open("radialDistribution.txt", fstream::out | fstream::trunc);
+        m_radialDistFile.open("radDistNc10T84Nt1001bins30.txt", fstream::out | fstream::trunc);
         m_radialDistFile << numberOfBins << endl;
         m_radialDistFile << setw(10) << "Bin" << "  ";
         m_radialDistFile << setw(10) << "No. of atoms" << endl;
@@ -149,7 +149,7 @@ void StatisticsSampler::sampleRadialDistribution(int numberOfBins) {
     }
 
     // normalize and write to file
-    m_radialDistFile.open("radialDistribution.txt", fstream::out | fstream::app);
+    m_radialDistFile.open("radDistNc10T84Nt1001bins30.txt", fstream::out | fstream::app);
     for (int bin=0; bin < numberOfBins; bin++) {
         double shellVolume = m_shellVolumeFactor *
         (m_bins[bin+1]*m_bins[bin+1]*m_bins[bin+1] - m_bins[bin]*m_bins[bin]*m_bins[bin]);
