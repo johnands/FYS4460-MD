@@ -20,10 +20,11 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 10;
-    double initialTemperature = UnitConverter::temperatureFromSI(300);  // measured in Kelvin
-    //double initialTemperature = 1.0;
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
+    int numberOfUnitCells = 20;
+    //double initialTemperature = UnitConverter::temperatureFromSI(84);  // measured in Kelvin
+    double initialTemperature = 1.5;
+    //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72);
     cout << "lattice: " << latticeConstant << endl;
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
@@ -44,7 +45,7 @@ int main(int numberOfArguments, char **argumentList)
     System *system = new System();
     system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
                             mass, BoltzmannDist, maxMinVelocity);
-    //system->setPores(new Spheres(system));
+    system->setPores(new Spheres(system));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
     system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
@@ -52,19 +53,19 @@ int main(int numberOfArguments, char **argumentList)
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
-    system->setUseThermoStat(false);
-    system->setThermalization(1001);
+    system->setUseThermoStat(true);
+    system->setThermalization(501);
 
-    system->setNumberOfTimeSteps(101);
+    system->setNumberOfTimeSteps(501);
     system->setTemperature(initialTemperature);
     system->removeTotalMomentum();
 
     //system->setPeriodicBoundaries(true);
     system->setUseExternalForce(false);
-    system->setWriteSample(true);
+    system->setWriteSample(false);
     system->setRadialDistribution(false);
-    system->setMakeXYZ(false);
-    system->setXYZName("argonSolidNc10T300Nt1001Andersen.xyz");
+    system->setMakeXYZ(true);
+    system->setXYZName("thermalizedFluidT15Nc20.xyz");
 
     system->runSimulation();
 

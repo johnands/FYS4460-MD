@@ -63,7 +63,7 @@ void LennardJonesCellList::calculateForces()
             atom2->force -= forceOnAtom;   // Newton's third law
 
             if (m_system->getUseExternalForce()) {
-                atom1->force[0] += 0.1;
+                atom1->force[0] += 0.5;
             }
 
             // dot product of Fij and dr
