@@ -4,10 +4,12 @@
 #include "integrators/integrator.h"
 #include "potentials/potential.h"
 #include "thermostats/thermostat.h"
+#include "porosities/porosities.h"
 #include "statisticssampler.h"
 #include "unitconverter.h"
 #include "io.h"
 #include "math/random.h"
+#include <string>
 
 using std::cout;
 using std::endl;
@@ -148,7 +150,9 @@ void System::runSimulation() {
     for (int timeStep=0; timeStep < getNumberOfTimeSteps(); timeStep++) {
         step(dt);
         m_statisticsSampler->sample(timeStep);
-        if (getRadialDistribution()) { m_statisticsSampler->sampleRadialDistribution(30); }
+        if (m_radialDistribution && m_steps > m_thermalization) {
+            m_statisticsSampler->sampleRadialDistribution(50);
+        }
         if ( !(timeStep % 100) ) {
             // print sample every 100 timesteps
             cout << steps() << "      " << time() << "    "
@@ -158,8 +162,14 @@ void System::runSimulation() {
                  << m_statisticsSampler->potentialEnergy() << "      "
                  << m_statisticsSampler->totalEnergy() << endl;
         }
-        if ( !(timeStep % 10) || timeStep == 0 ) {
+        /*if ( m_steps == 1002) {
+            { movie.saveState(this); }
+        }*/
+        /*if ( !(timeStep % 10) || timeStep == 1 ) {
             if (getMakeXYZ()) { movie.saveState(this); }
+        }*/
+        if ( m_steps > m_thermalization && !(timeStep % 10) ) {
+            if (m_makeXYZ) { movie.saveState(this); }
         }
     }
     finish = clock();
@@ -177,11 +187,59 @@ void System::calculateForces() {
 
 void System::step(double dt) {
     m_integrator->integrate(dt);
-    if (getUseThermostat() && m_steps < getThermalization()) {
-        getThermostat()->applyThermostat(m_statisticsSampler->temperature());
+    if (getUseThermostat() && m_steps < m_thermalization) {
+        m_thermostat->applyThermostat(m_statisticsSampler->temperature());
     }
+    /*else if (m_steps == 2*m_thermalization) {
+        m_pores->makePores();
+    }
+    else if (m_steps > 2*m_thermalization && m_steps < (2*m_thermalization + m_thermalization)) {
+        m_thermostat->applyThermostat(m_statisticsSampler->temperature());
+    }*/
     m_steps++;
     m_time += dt;
+}
+
+void System::readFromStateFile(const char *filename, double mass, double latticeConstant,
+                               int numberOfUnitCellsEachDimension) {
+
+    double lc = latticeConstant;
+    double size = numberOfUnitCellsEachDimension*lc;
+    setSystemSize(vec3(size, size, size));
+    setSystemSizeHalf(vec3(size/2.0, size/2.0, size/2.0));
+
+    // open file
+    std::ifstream input;
+    input.open(filename, std::ios::in);
+
+    if (input.is_open()) { cout << "yes" << endl; }
+
+    // skip first two lines
+    std::string dummyLine;
+    std::getline(input, dummyLine);
+
+    // process file
+    std::string name;
+    double x, y, z;
+    double vx, vy, vz;
+    int index = 0;
+    for ( std::string line; std::getline(input, line); ) {
+            input >> name >> x >> y >> z >> vx >> vy >> vz;
+
+            // convert positions to MD units
+            x = UnitConverter::lengthFromAngstroms(x);
+            y = UnitConverter::lengthFromAngstroms(y);
+            z = UnitConverter::lengthFromAngstroms(z);
+
+            // set atom in grid
+            Atom *atom = new Atom(mass);
+            atom->position.set(x, y, z);
+            atom->velocity.set(vx, vy, vz);
+            atom->storeInitialPosition();
+            m_atoms.push_back(atom);
+            atom->setIndex(index);
+            index++;
+    }
 }
 
 void System::removeAtom(int index) {

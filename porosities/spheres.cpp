@@ -3,9 +3,9 @@
 #include "../math/random.h"
 #include <iostream>
 
-Spheres::Spheres(System *system) :
+Spheres::Spheres(System *system, bool usePores) :
     Porosities(system) {
-    makePores();
+    if (usePores) { makePores(); }
 }
 
 void Spheres::makePores() {
@@ -28,7 +28,6 @@ void Spheres::makePores() {
             double distanceFromCenter = dr.length();
 
             if (distanceFromCenter < sphereRadius) {
-                //std::cout << "yes" << std::endl;
                 atom->setMovingAtom(false);
                 atom->setName("NM");
             }

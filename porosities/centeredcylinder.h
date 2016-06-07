@@ -5,7 +5,7 @@
 
 class CenteredCylinder : public Porosities {
 public:
-    CenteredCylinder(class System *system);
+    CenteredCylinder(class System *system, bool usePores);
     void makePores();
 
 private:

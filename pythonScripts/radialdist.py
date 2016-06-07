@@ -28,8 +28,9 @@ def extract(filename):
 
 
 def treatData():
-    radialDistribution, bins, numberOfBins = extract('radDistNc10T84Nt1001bins30.txt')
-    latticeConstant = 1.54479		# in MD units 	
+    radialDistribution, bins, numberOfBins = extract('radDistNc10T15ThermoBins30.txt')
+    sigma = 3.405
+    latticeConstant = 5.72 / sigma		# in MD units 	
     bins /= latticeConstant
 
     numberOfTimeSteps = len(radialDistribution) / len(bins)

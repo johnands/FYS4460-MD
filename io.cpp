@@ -34,13 +34,12 @@ void IO::close() {
 void IO::saveState(System *system)
 {
     if(file.is_open()) {
-        if (system->steps() == 501) {
         file << system->atoms().size() << endl;
         file << "x y z vx vy vz" << endl;
         for(Atom *atom : system->atoms()) {
             file << atom->getName() << " "
                  << UnitConverter::lengthToAngstroms(atom->position.x()) << " " << UnitConverter::lengthToAngstroms(atom->position.y()) << " " << UnitConverter::lengthToAngstroms(atom->position.z()) << " "
                  << atom->velocity.x() << " " << atom->velocity.y() << " " << atom->velocity.z() <<  endl;
-        }}
+        }
     }
 }

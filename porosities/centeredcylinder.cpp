@@ -3,9 +3,9 @@
 #include "../system.h"
 #include <iostream>
 
-CenteredCylinder::CenteredCylinder(System *system) :
+CenteredCylinder::CenteredCylinder(System *system, bool usePores) :
     Porosities(system) {
-    makePores();
+    if (usePores) { makePores(); }
     std::cout << "poreradius: " << m_poreRadius << std::endl;
 }
 

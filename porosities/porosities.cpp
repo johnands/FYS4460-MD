@@ -39,5 +39,5 @@ void Porosities::halfDensity() {
             }
         }
     }
-    std::cout << "system size " << m_system->atoms().size() << std::endl;
+    std::cout << "N with half-density " << m_system->atoms().size() << std::endl;
 }

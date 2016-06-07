@@ -21,7 +21,7 @@ using namespace std;
 int main(int numberOfArguments, char **argumentList)
 {
     int numberOfUnitCells = 20;
-    //double initialTemperature = UnitConverter::temperatureFromSI(84);  // measured in Kelvin
+    //double initialTemperature = UnitConverter::temperatureFromSI();  // measured in Kelvin
     double initialTemperature = 1.5;
     //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72);
@@ -42,10 +42,20 @@ int main(int numberOfArguments, char **argumentList)
     double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
     double tau = 10*dt;
 
+    bool readFromFile = true;
+    bool usePores = true;
+
     System *system = new System();
-    system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
-                            mass, BoltzmannDist, maxMinVelocity);
-    system->setPores(new Spheres(system));
+    if (readFromFile) {
+        system->readFromStateFile("thermalizedFluidNc20T15Nt1001.xyz", mass, latticeConstant,
+                                      numberOfUnitCells);
+    }
+    else {
+        system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
+                                mass, BoltzmannDist, maxMinVelocity);
+    }
+
+    system->setPores(new Spheres(system, usePores));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
     system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
@@ -56,18 +66,19 @@ int main(int numberOfArguments, char **argumentList)
     system->setUseThermoStat(true);
     system->setThermalization(501);
 
-    system->setNumberOfTimeSteps(501);
+    system->setNumberOfTimeSteps(1501);
     system->setTemperature(initialTemperature);
     system->removeTotalMomentum();
 
     //system->setPeriodicBoundaries(true);
     system->setUseExternalForce(false);
-    system->setWriteSample(false);
+    system->setWriteSample(true);
     system->setRadialDistribution(false);
     system->setMakeXYZ(true);
-    system->setXYZName("thermalizedFluidT15Nc20.xyz");
+    system->setXYZName("halfDensitySpheresNc20T15.xyz");
 
     system->runSimulation();
+
 
     return 0;
 }
