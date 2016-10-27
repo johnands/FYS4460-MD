@@ -1,6 +1,7 @@
 #include "math/random.h"
 #include "potentials/lennardjones.h"
 #include "potentials/lennardjonescelllist.h"
+#include "potentials/neuralnetwork.h"
 #include "integrators/eulercromer.h"
 #include "integrators/velocityverlet.h"
 #include "thermostats/berendsen.h"
@@ -20,7 +21,7 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 20;
+    int numberOfUnitCells = 18;
     //double initialTemperature = UnitConverter::temperatureFromSI();  // measured in Kelvin
     double initialTemperature = 1.5;
     //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
@@ -42,7 +43,7 @@ int main(int numberOfArguments, char **argumentList)
     double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
     double tau = 10*dt;
 
-    bool readFromFile = true;
+    bool readFromFile = false;
     bool usePores = true;
 
     System *system = new System();
@@ -55,27 +56,28 @@ int main(int numberOfArguments, char **argumentList)
                                 mass, BoltzmannDist, maxMinVelocity);
     }
 
-    system->setPores(new Spheres(system, usePores));
+    system->setPores(new CenteredCylinder(system, usePores));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
     system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
+    system->setPotential(new NeuralNetwork(system, "test.txt", 2.5));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
-    system->setUseThermoStat(true);
-    system->setThermalization(501);
+    system->setUseThermoStat(false);
+    system->setThermalization(0);
 
-    system->setNumberOfTimeSteps(1501);
+    system->setNumberOfTimeSteps(500);
     system->setTemperature(initialTemperature);
     system->removeTotalMomentum();
 
     //system->setPeriodicBoundaries(true);
-    system->setUseExternalForce(false);
-    system->setWriteSample(true);
+    system->setUseExternalForce(true);
+    system->setWriteSample(false);
     system->setRadialDistribution(false);
-    system->setMakeXYZ(true);
-    system->setXYZName("halfDensitySpheresNc20T15.xyz");
+    system->setMakeXYZ(false);
+    system->setXYZName("cylinder.xyz");
 
     system->runSimulation();
 

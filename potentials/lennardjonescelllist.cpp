@@ -35,13 +35,12 @@ void LennardJonesCellList::calculateForces()
 
     for (int i=0; i < m_system->atoms().size(); i++) {
         Atom *atom1 = m_system->atoms()[i];
-        vec3 dr, forceOnAtom, cell;
+        vec3 dr, forceOnAtom;
         double dr6, dr2;
 
         // loop over all atoms in atom1's neighbour list
         for (int j=0; j < m_cellList->getNeighbours()[i].size(); j++) {
 
-            //Atom *atom2 = atom1->neighbourList()[j];
             Atom *atom2 = m_cellList->getNeighbours()[i][j];
 
             // calculate distance vector
@@ -63,7 +62,7 @@ void LennardJonesCellList::calculateForces()
             atom2->force -= forceOnAtom;   // Newton's third law
 
             if (m_system->getUseExternalForce()) {
-                atom1->force[0] += 0.5;
+                atom1->force[0] += 1.0;
             }
 
             // dot product of Fij and dr

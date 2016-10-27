@@ -11,7 +11,7 @@ private:
     double m_epsilon = 1.0;
     double m_sigma6  = 1.0;
     double m_cutOffDistance = 0.0;
-    int    m_updateLists = 0.0;
+    int    m_updateLists = 0;
     CellList *m_cellList = nullptr;
 
 public:

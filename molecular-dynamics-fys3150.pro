@@ -25,7 +25,9 @@ SOURCES += main.cpp \
     thermostats/andersen.cpp \
     porosities/porosities.cpp \
     porosities/centeredcylinder.cpp \
-    porosities/spheres.cpp
+    porosities/spheres.cpp \
+    potentials/neuralnetwork.cpp \
+    math/activationfunctions.cpp
 
 HEADERS += \
     atom.h \
@@ -47,5 +49,7 @@ HEADERS += \
     thermostats/andersen.h \
     porosities/porosities.h \
     porosities/centeredcylinder.h \
-    porosities/spheres.h
+    porosities/spheres.h \
+    potentials/neuralnetwork.h \
+    math/activationfunctions.h
 
