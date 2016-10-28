@@ -14,8 +14,7 @@
 using std::cout;
 using std::endl;
 
-System::System()
-{
+System::System() {
 
 }
 
@@ -30,7 +29,6 @@ System::System()
 }*/
 
 void System::applyPeriodicBoundaryConditions() {
-    // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
 
     // check if atoms is outside of box [0, b*Nx] x [0, b*Ny] x [0, b*Nz]
     for (Atom *atom : m_atoms) {

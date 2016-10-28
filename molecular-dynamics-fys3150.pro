@@ -53,3 +53,5 @@ HEADERS += \
     potentials/neuralnetwork.h \
     math/activationfunctions.h
 
+LIBS += -larmadillo -lblas -llapack
+

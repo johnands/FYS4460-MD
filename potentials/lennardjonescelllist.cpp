@@ -17,6 +17,7 @@ LennardJonesCellList::LennardJonesCellList(System *system, double sigma, double 
     m_cellList->setupCells();
     m_cellList->updateCells();
     m_updateLists = 0;
+    m_distance = 10;
 }
 
 void LennardJonesCellList::calculateForces()
@@ -45,6 +46,13 @@ void LennardJonesCellList::calculateForces()
 
             // calculate distance vector
             dr = atom1->position - atom2->position;
+
+            // check distance **test**
+            double distance = dr.length();
+            if (distance < m_distance) {
+                m_distance = distance;
+                std::cout << "Smallest distance: " << distance << endl;
+            }
 
             // make sure we're using shortest distance component-wise (periodic boundary conditions)
             for (int dim=0; dim < 3; dim++) {

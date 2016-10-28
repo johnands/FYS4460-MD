@@ -25,7 +25,7 @@ int main(int numberOfArguments, char **argumentList)
     //double initialTemperature = UnitConverter::temperatureFromSI();  // measured in Kelvin
     double initialTemperature = 1.5;
     //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72);
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
     cout << "lattice: " << latticeConstant << endl;
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
@@ -40,11 +40,11 @@ int main(int numberOfArguments, char **argumentList)
     cout << "One unit of energy is "      << UnitConverter::energyToSI(1.0)      << " J"             << endl;
 
     bool BoltzmannDist = true;             // initial velocities given by Boltzmann distribution
-    double maxMinVelocity = 0.5;           // uniformly distributed velocities [-v, v]
+    double maxMinVelocity = 1.5;           // uniformly distributed velocities [-v, v]
     double tau = 10*dt;
 
     bool readFromFile = false;
-    bool usePores = true;
+    bool usePores = false;
 
     System *system = new System();
     if (readFromFile) {
@@ -60,7 +60,7 @@ int main(int numberOfArguments, char **argumentList)
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
     system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
-    system->setPotential(new NeuralNetwork(system, "test.txt", 2.5));
+    //system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.10-17.05.14/graph.dat", 2.5));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
@@ -73,11 +73,11 @@ int main(int numberOfArguments, char **argumentList)
     system->removeTotalMomentum();
 
     //system->setPeriodicBoundaries(true);
-    system->setUseExternalForce(true);
+    system->setUseExternalForce(false);
     system->setWriteSample(false);
     system->setRadialDistribution(false);
     system->setMakeXYZ(false);
-    system->setXYZName("cylinder.xyz");
+    system->setXYZName("test.xyz");
 
     system->runSimulation();
 

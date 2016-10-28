@@ -119,11 +119,11 @@ double NeuralNetwork::network(double dataPoint) {
     // send data through network
     // use relu as activation except for output layer
     std::vector<arma::mat> activations(m_nLayers+1);
-    activations[0] = ActivationFunctions::relu(data*m_weights[0] + m_biases[0]);
+    activations[0] = ActivationFunctions::sigmoid(data*m_weights[0] + m_biases[0]);
     for (int i=1; i < m_nLayers; i++) {
         // relu for all hidden layers except last one
         if (i < m_nLayers-1)
-            activations[i] = ActivationFunctions::relu(activations[i-1]*m_weights[i] + m_biases[i]);
+            activations[i] = ActivationFunctions::sigmoid(activations[i-1]*m_weights[i] + m_biases[i]);
 
         // sigmoid on last hidden layer
         else
@@ -132,6 +132,7 @@ double NeuralNetwork::network(double dataPoint) {
     // no activation function for output layer (i.e. linear or identity activation function)
     activations[m_nLayers] = activations[m_nLayers-1]*m_weights[m_nLayers] + m_biases[m_nLayers];
 
+    //std::cout << activations[m_nLayers](0,0) << std::endl;
     return activations[m_nLayers](0,0);
 }
 
@@ -190,6 +191,6 @@ void NeuralNetwork::calculateForces() {
         }
     }
 
-    m_potentialEnergy = 4*potentialEnergy;
+    m_potentialEnergy = potentialEnergy;
     m_pressure = m_inverseVolume*pressure;
 }
