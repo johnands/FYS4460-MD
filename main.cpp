@@ -16,12 +16,13 @@
 #include "celllist.h"
 #include <iostream>
 #include <time.h>
+#include <armadillo>
 
 using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 18;
+    int numberOfUnitCells = 10;
     //double initialTemperature = UnitConverter::temperatureFromSI();  // measured in Kelvin
     double initialTemperature = 1.5;
     //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26); // measured in angstroms
@@ -59,8 +60,8 @@ int main(int numberOfArguments, char **argumentList)
     system->setPores(new CenteredCylinder(system, usePores));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
-    system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
-    //system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.10-17.05.14/graph.dat", 2.5));
+    //system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
+    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.10-17.05.14/graph.dat", 2.5));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
@@ -68,7 +69,7 @@ int main(int numberOfArguments, char **argumentList)
     system->setUseThermoStat(false);
     system->setThermalization(0);
 
-    system->setNumberOfTimeSteps(500);
+    system->setNumberOfTimeSteps(10);
     system->setTemperature(initialTemperature);
     system->removeTotalMomentum();
 

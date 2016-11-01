@@ -49,10 +49,10 @@ void LennardJonesCellList::calculateForces()
 
             // check distance **test**
             double distance = dr.length();
-            if (distance < m_distance) {
+            /*if (distance < m_distance) {
                 m_distance = distance;
-                std::cout << "Smallest distance: " << distance << endl;
-            }
+                //std::cout << "Smallest distance: " << distance << endl;
+            }*/
 
             // make sure we're using shortest distance component-wise (periodic boundary conditions)
             for (int dim=0; dim < 3; dim++) {
@@ -64,6 +64,7 @@ void LennardJonesCellList::calculateForces()
             dr6 = 1.0 / pow(dr.length(), 6);
             dr2 = 1.0 / dr.lengthSquared();
             forceOnAtom = 24*dr6*(2*dr6 - 1)*dr2*dr;
+            //cout << forceOnAtom << endl;
 
             // add contribution to force on atom i and j
             atom1->force += forceOnAtom;

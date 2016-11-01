@@ -14,8 +14,7 @@ public:
     void readFromFile();
     double network(double dataPoint);
     void calculateForces();
-    arma::mat relu(arma::mat matrix);
-
+    double backPropagation();
 
 private:
     const char *m_filename;
@@ -23,6 +22,9 @@ private:
     int m_nNodes;
     std::vector<arma::mat> m_weights = std::vector<arma::mat>();
     std::vector<arma::mat> m_biases  = std::vector<arma::mat>();
+    std::vector<arma::mat> m_preActivations = std::vector<arma::mat>();
+    std::vector<arma::mat> m_activations = std::vector<arma::mat>();
+    std::vector<arma::mat> m_derivatives = std::vector<arma::mat>();
     std::ofstream m_outFile;
     CellList *m_cellList = nullptr;
     int    m_updateLists = 0;

@@ -118,22 +118,53 @@ double NeuralNetwork::network(double dataPoint) {
 
     // send data through network
     // use relu as activation except for output layer
-    std::vector<arma::mat> activations(m_nLayers+1);
-    activations[0] = ActivationFunctions::sigmoid(data*m_weights[0] + m_biases[0]);
+    m_preActivations.resize(m_nLayers+2);
+
+    m_activations.resize(m_nLayers+1);
+    m_preActivations[0] = data*m_weights[0] + m_biases[0];
+    m_activations[0] = ActivationFunctions::sigmoid(m_preActivations[0]);
     for (int i=1; i < m_nLayers; i++) {
         // relu for all hidden layers except last one
-        if (i < m_nLayers-1)
-            activations[i] = ActivationFunctions::sigmoid(activations[i-1]*m_weights[i] + m_biases[i]);
+        if (i < m_nLayers-1) {
+            m_preActivations[i] = m_activations[i-1]*m_weights[i] + m_biases[i];
+            m_activations[i] = ActivationFunctions::sigmoid(m_preActivations[i]);
+        }
 
         // sigmoid on last hidden layer
-        else
-            activations[i] = ActivationFunctions::sigmoid(activations[i-1]*m_weights[i] + m_biases[i]);
+        else {
+            m_preActivations[i] = m_activations[i-1]*m_weights[i] + m_biases[i];
+            m_activations[i] = ActivationFunctions::sigmoid(m_preActivations[i]);
+        }
     }
     // no activation function for output layer (i.e. linear or identity activation function)
-    activations[m_nLayers] = activations[m_nLayers-1]*m_weights[m_nLayers] + m_biases[m_nLayers];
+    m_preActivations[m_nLayers] = m_activations[m_nLayers-1]*m_weights[m_nLayers] + m_biases[m_nLayers];
+    m_activations[m_nLayers] = m_preActivations[m_nLayers];
 
     //std::cout << activations[m_nLayers](0,0) << std::endl;
-    return activations[m_nLayers](0,0);
+    return m_activations[m_nLayers](0,0);
+}
+
+
+double NeuralNetwork::backPropagation() {
+    // find derivate of output w.r.t. intput, i.e. dE/dr_ij
+    // need to find the "error" terms for all the nodes in all the layers
+
+    // the derivative of the output neuron's activation function w.r.t.
+    // its input is propagated backwards.
+    // the output activation function is f(x) = x, so this is 1
+    m_derivatives.resize(m_nLayers+1);
+    arma::mat output(1,1); output.fill(1);
+    m_derivatives[m_nLayers] = output;
+
+    // we can thus compute the error vectors for the other layers
+    for (int i=m_nLayers-1; i >= 0; i--) {
+        m_derivatives[i] = ( m_derivatives[i+1]*m_weights[i+1].t() ) %
+                           ActivationFunctions::sigmoidDerivative(m_preActivations[i]);
+        std::cout << arma::size(m_derivatives[i]) << std::endl;
+    }
+
+    std::cout << arma::size(m_derivatives[0]) << std::endl;
+    return m_derivatives[0](0,0);
 }
 
 
@@ -175,8 +206,10 @@ void NeuralNetwork::calculateForces() {
             potentialEnergy += energy;
 
             // calculate force: backpropagation...
-            // give energypoint as input to backpropagation algorithm
-            forceOnAtom[0] = 0; forceOnAtom[1] = 0; forceOnAtom[2] = 0;
+            double dEdr = backPropagation();
+            double drInverse = 1.0/distance;
+            forceOnAtom = -dEdr*drInverse*dr;
+            //std::cout << forceOnAtom << std::endl;
 
             // add contribution to force on atom i and j
             atom1->force += forceOnAtom;
@@ -194,3 +227,12 @@ void NeuralNetwork::calculateForces() {
     m_potentialEnergy = potentialEnergy;
     m_pressure = m_inverseVolume*pressure;
 }
+
+
+
+
+
+
+
+
+
