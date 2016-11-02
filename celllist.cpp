@@ -8,18 +8,21 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-CellList::CellList(System *system, double cutOffDistance) {
-    m_cutOffDistance = cutOffDistance;
+CellList::CellList(System *system, double rCut, double neighbourCut) {
     m_system = system;
+    m_rCut = rCut;
+    m_rCutSquared = rCut*rCut;
+    m_neighbourCut = neighbourCut;
+    m_neighbourCutSquared = neighbourCut*neighbourCut;
 }
 
 void CellList::setupCells() {
 
-    m_numberOfCellsEachDimension = m_system->systemSize().x() / m_cutOffDistance;
+    m_numberOfCellsEachDimension = m_system->systemSize().x() / m_rCut;
     if (m_numberOfCellsEachDimension < 1.0) { m_numberOfCellsEachDimension = 1.0; }
 
     cout << "system size: " << m_system->systemSize().x() << endl;
-    cout << "cutoff: " << m_cutOffDistance << endl;
+    cout << "cutoff: " << m_rCut << endl;
     cout << "number of cells: " << m_numberOfCellsEachDimension << endl;
 
     // make room in memory
@@ -90,7 +93,7 @@ void CellList::updateCells() {
                                     }
 
                                     // add atom2 to atom1 neighbour list if distance is shorter than cut-off distance
-                                    if (dr.length() < m_cutOffDistance){
+                                    if (dr.lengthSquared() < m_neighbourCutSquared) {
                                         m_neighbours[atom1->getIndex()].push_back(atom2);
                                     }
                                 }

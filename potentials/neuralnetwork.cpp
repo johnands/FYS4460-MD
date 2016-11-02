@@ -2,14 +2,24 @@
 #include "celllist.h"
 #include "../math/activationfunctions.h"
 
-NeuralNetwork::NeuralNetwork(System *system, const char *filename, double cutOffDistance) : Potential(system) {
+NeuralNetwork::NeuralNetwork(System *system, const char *filename,
+                             double rCut, double neighbourCut) :
+               Potential(system) {
 
     m_filename = filename;
     readFromFile();
 
-    m_cellList = new CellList(system, cutOffDistance);
+    m_cellList = new CellList(system, rCut, neighbourCut);
     m_cellList->setupCells();
     m_cellList->updateCells();
+
+    m_rCut = rCut;
+    m_rCutSquared = rCut*rCut;
+    m_neighbourCut = neighbourCut;
+
+    double r2 = 1.0 / m_rCutSquared;
+    m_potentialCut = 4*r2*r2*r2*(r2*r2*r2 - 1);
+
     m_updateLists = 0;
 }
 
@@ -25,6 +35,11 @@ void NeuralNetwork::readFromFile() {
     std::string activation;
     input >> m_nLayers >> m_nNodes >> activation;
     std::cout << m_nLayers << " " << m_nNodes << " " << activation << std::endl;
+
+    // set sizes
+    m_preActivations.resize(m_nLayers+2);
+    m_activations.resize(m_nLayers+2);
+    m_derivatives.resize(m_nLayers+2);
 
     // skip a blank line
     std::string dummyLine;
@@ -116,32 +131,24 @@ double NeuralNetwork::network(double dataPoint) {
     // convert data point to 1x1 matrix
     arma::mat data(1,1); data(0,0) = dataPoint;
 
-    // send data through network
-    // use relu as activation except for output layer
-    m_preActivations.resize(m_nLayers+2);
+    // linear activation for input layer
+    m_preActivations[0] = data;
+    m_activations[0] = m_preActivations[0];
 
-    m_activations.resize(m_nLayers+1);
-    m_preActivations[0] = data*m_weights[0] + m_biases[0];
-    m_activations[0] = ActivationFunctions::sigmoid(m_preActivations[0]);
-    for (int i=1; i < m_nLayers; i++) {
-        // relu for all hidden layers except last one
-        if (i < m_nLayers-1) {
-            m_preActivations[i] = m_activations[i-1]*m_weights[i] + m_biases[i];
-            m_activations[i] = ActivationFunctions::sigmoid(m_preActivations[i]);
-        }
-
-        // sigmoid on last hidden layer
-        else {
-            m_preActivations[i] = m_activations[i-1]*m_weights[i] + m_biases[i];
-            m_activations[i] = ActivationFunctions::sigmoid(m_preActivations[i]);
-        }
+    // hidden layers
+    for (int i=0; i < m_nLayers; i++) {
+        // weights and biases starts at first hidden layer:
+        // weights[0] are the weights connecting input layer to first hidden layer
+        m_preActivations[i+1] = m_activations[i]*m_weights[i] + m_biases[i];
+        m_activations[i+1] = ActivationFunctions::sigmoid(m_preActivations[i+1]);
     }
-    // no activation function for output layer (i.e. linear or identity activation function)
-    m_preActivations[m_nLayers] = m_activations[m_nLayers-1]*m_weights[m_nLayers] + m_biases[m_nLayers];
-    m_activations[m_nLayers] = m_preActivations[m_nLayers];
 
-    //std::cout << activations[m_nLayers](0,0) << std::endl;
-    return m_activations[m_nLayers](0,0);
+    // linear activation for output layer
+    m_preActivations[m_nLayers+1] = m_activations[m_nLayers]*m_weights[m_nLayers] + m_biases[m_nLayers];
+    m_activations[m_nLayers+1] = m_preActivations[m_nLayers+1];
+
+    // return activation of output neuron, which is a 1x1-matrix
+    return m_activations[m_nLayers+1](0,0);
 }
 
 
@@ -152,18 +159,18 @@ double NeuralNetwork::backPropagation() {
     // the derivative of the output neuron's activation function w.r.t.
     // its input is propagated backwards.
     // the output activation function is f(x) = x, so this is 1
-    m_derivatives.resize(m_nLayers+1);
     arma::mat output(1,1); output.fill(1);
-    m_derivatives[m_nLayers] = output;
+    m_derivatives[m_nLayers+1] = output;
 
     // we can thus compute the error vectors for the other layers
-    for (int i=m_nLayers-1; i >= 0; i--) {
-        m_derivatives[i] = ( m_derivatives[i+1]*m_weights[i+1].t() ) %
-                           ActivationFunctions::sigmoidDerivative(m_preActivations[i]);
-        std::cout << arma::size(m_derivatives[i]) << std::endl;
+    for (int i=m_nLayers; i > 0; i--) {
+        m_derivatives[i] = ( m_weights[i]*m_derivatives[i+1] ) %
+                           ActivationFunctions::sigmoidDerivative(m_preActivations[i].t());
     }
 
-    std::cout << arma::size(m_derivatives[0]) << std::endl;
+    // linear activation function for input neuron
+    m_derivatives[0] = m_weights[0]*m_derivatives[1];
+
     return m_derivatives[0](0,0);
 }
 
@@ -174,7 +181,7 @@ void NeuralNetwork::calculateForces() {
     double pressure = 0;
 
     // update lists every 5th time step
-    if (m_updateLists==5) {
+    if (m_updateLists >= 20) {
         m_cellList->clearCells();
         m_cellList->updateCells();
         m_updateLists = 0;
@@ -184,7 +191,6 @@ void NeuralNetwork::calculateForces() {
 
     for (int i=0; i < m_system->atoms().size(); i++) {
         Atom *atom1 = m_system->atoms()[i];
-        vec3 dr, forceOnAtom;
 
         // loop over all atoms in atom1's neighbour list
         for (int j=0; j < m_cellList->getNeighbours()[i].size(); j++) {
@@ -192,7 +198,7 @@ void NeuralNetwork::calculateForces() {
             Atom *atom2 = m_cellList->getNeighbours()[i][j];
 
             // calculate distance vector
-            dr = atom1->position - atom2->position;
+            vec3 dr = atom1->position - atom2->position;
 
             // make sure we're using shortest distance component-wise (periodic boundary conditions)
             for (int dim=0; dim < 3; dim++) {
@@ -200,16 +206,25 @@ void NeuralNetwork::calculateForces() {
                 else if (dr[dim] < -m_system->systemSizeHalf()[dim]) { dr[dim] += m_system->systemSize()[dim]; }
             }
 
-            // calculate potential energy with ANN using distance as input
-            double distance = dr.length();
-            double energy = network(distance);
-            potentialEnergy += energy;
+            double dr2 = dr.lengthSquared();
 
-            // calculate force: backpropagation...
-            double dEdr = backPropagation();
-            double drInverse = 1.0/distance;
-            forceOnAtom = -dEdr*drInverse*dr;
-            //std::cout << forceOnAtom << std::endl;
+            // calculate potential energy with ANN using distance as input if
+            // distance is shorter than cutoff
+            vec3 forceOnAtom;
+            if (dr2 <= m_rCutSquared) {
+                double distance = dr.length();
+                double energy = network(distance);
+                potentialEnergy += energy;
+
+                // calculate force: backpropagation...
+                double dEdr = backPropagation();
+                double drInverse = 1.0 / distance;
+                forceOnAtom = -dEdr*drInverse*dr;
+            }
+            else {
+                // if not, zero force and energy
+                forceOnAtom = dr*0;
+            }
 
             // add contribution to force on atom i and j
             atom1->force += forceOnAtom;
@@ -229,6 +244,14 @@ void NeuralNetwork::calculateForces() {
 }
 
 
+void NeuralNetwork::clearVectors() {
+
+    for (int i=0; i < m_derivatives.size(); i++) {
+        m_derivatives[i].zeros();
+        m_preActivations[i].zeros();
+        m_activations[i].zeros();
+    }
+}
 
 
 

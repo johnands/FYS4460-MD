@@ -42,9 +42,10 @@ void LennardJones::calculateForces()
             if (dr.z() >  m_system->systemSizeHalf().z()) { dr[2] -= m_system->systemSize().z(); }
             if (dr.z() < -m_system->systemSizeHalf().z()) { dr[2] += m_system->systemSize().z(); }
 
-            // calculate force
-            dr6 = 1.0 / pow(dr.length(), 6);
             dr2 = 1.0 / dr.lengthSquared();
+            dr6 = dr2*dr2*dr2;
+
+            // calculate force
             forceOnAtom = 24*dr6*(2*dr6 - 1) * dr2*dr;
 
             // add contribution to force on atom i and j

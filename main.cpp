@@ -60,8 +60,8 @@ int main(int numberOfArguments, char **argumentList)
     system->setPores(new CenteredCylinder(system, usePores));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
-    //system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5));
-    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.10-17.05.14/graph.dat", 2.5));
+    //system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5, 3.0));
+    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/02.11-17.33.25/graph.dat", 2.5, 3.0));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
@@ -69,7 +69,7 @@ int main(int numberOfArguments, char **argumentList)
     system->setUseThermoStat(false);
     system->setThermalization(0);
 
-    system->setNumberOfTimeSteps(10);
+    system->setNumberOfTimeSteps(501);
     system->setTemperature(initialTemperature);
     system->removeTotalMomentum();
 
@@ -78,7 +78,7 @@ int main(int numberOfArguments, char **argumentList)
     system->setWriteSample(false);
     system->setRadialDistribution(false);
     system->setMakeXYZ(false);
-    system->setXYZName("test.xyz");
+    system->setXYZName("testCell.xyz");
 
     system->runSimulation();
 
