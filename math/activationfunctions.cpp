@@ -16,7 +16,7 @@ namespace ActivationFunctions {
 
     arma::mat sigmoid(arma::mat matrix) {
 
-        return 1./(1 + arma::exp(-matrix));
+        return 1.0/(1 + arma::exp(-matrix));
     }
 
     arma::mat reluDerivative(arma::mat matrix) {
@@ -33,7 +33,9 @@ namespace ActivationFunctions {
 
     arma::mat sigmoidDerivative(arma::mat matrix) {
 
-        return sigmoid(matrix) % (1 - sigmoid(matrix));
+        arma::mat sigmoidMatrix = sigmoid(matrix);
+        return sigmoidMatrix % (1 - sigmoidMatrix);
+        //return sigmoid(matrix) % (1 - sigmoid(matrix));
         //return arma::exp(-matrix)/((1 + arma::exp(-matrix))*(1 + arma::exp(-matrix)));
 
     }

@@ -116,6 +116,11 @@ void NeuralNetwork::readFromFile() {
     // reshape bias of output node
     m_biases[m_nLayers].shed_cols(1,m_nNodes-1);
 
+    m_weightsTransposed.resize(m_nLayers+1);
+    // obtained transposed matrices
+    for (int i=0; i < m_weights.size(); i++)
+        m_weightsTransposed[i] = m_weights[i].t();
+
     // write out entire system for comparison
     for (const auto i : m_weights)
         std::cout << i << std::endl;
@@ -164,12 +169,12 @@ double NeuralNetwork::backPropagation() {
 
     // we can thus compute the error vectors for the other layers
     for (int i=m_nLayers; i > 0; i--) {
-        m_derivatives[i] = ( m_weights[i]*m_derivatives[i+1] ) %
-                           ActivationFunctions::sigmoidDerivative(m_preActivations[i].t());
+        m_derivatives[i] = ( m_derivatives[i+1]*m_weightsTransposed[i] ) %
+                           ActivationFunctions::sigmoidDerivative(m_preActivations[i]);
     }
 
     // linear activation function for input neuron
-    m_derivatives[0] = m_weights[0]*m_derivatives[1];
+    m_derivatives[0] = m_derivatives[1]*m_weightsTransposed[0];
 
     return m_derivatives[0](0,0);
 }

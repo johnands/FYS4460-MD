@@ -5,6 +5,12 @@ CONFIG -= qt
 
 QMAKE_CXX += -g
 
+release {
+    DEFINES += ARMA_NO_DEBUG
+    QMAKE_CXXFLAGS_RELEASE -= -O2
+    QMAKE_CXXFLAGS_RELEASE += -O3
+}
+
 SOURCES += main.cpp \
     atom.cpp \
     system.cpp \
