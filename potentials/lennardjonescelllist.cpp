@@ -85,5 +85,4 @@ void LennardJonesCellList::calculateForces()
 
     m_potentialEnergy = 4*potentialEnergy;
     m_pressure = m_inverseVolume*pressure;
-
 }

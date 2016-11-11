@@ -29,7 +29,8 @@ void UnitConverter::initializeMDUnits() {
     // Molecular Dynamics units
 
     // Fundamental units
-    double m0 = 1.66053892e-27;         // SI [kg]
+    //double m0 = 1.66053892e-27;         // SI [kg]
+    double m0 = 6.63352088e-26;
     double L0 = 3.405e-10;              // SI [m]
     double kb = 1.3806488e-23;          // SI [J/K]
     double E0eV = 1.0318e-2;            // eV

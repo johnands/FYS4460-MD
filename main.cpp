@@ -23,11 +23,11 @@ using namespace std;
 
 int main(int numberOfArguments, char **argumentList)
 {
-    int numberOfUnitCells = 10;
-    //double initialTemperature = UnitConverter::temperatureFromSI();  // measured in Kelvin
-    double initialTemperature = 1.5;
-    //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
+    int numberOfUnitCells = 8;
+    double initialTemperature = UnitConverter::temperatureFromSI(100);  // measured in Kelvin
+    //double initialTemperature = 1.5;
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
+    //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
     cout << "lattice: " << latticeConstant << endl;
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
@@ -61,8 +61,8 @@ int main(int numberOfArguments, char **argumentList)
     system->setPores(new CenteredCylinder(system, usePores));
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
-    system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5, 3.0));
-    //system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/04.11-14.58.07/graph.dat", 2.5, 3.0));
+    //system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5, 3.0));
+    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/04.11-14.58.07/graph.dat", 2.5, 3.0));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));

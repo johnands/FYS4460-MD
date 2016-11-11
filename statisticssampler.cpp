@@ -64,17 +64,18 @@ void StatisticsSampler::sampleKineticEnergy()
     for(Atom *atom : m_system->atoms()) {
         m_kineticEnergy += 0.5 * atom->mass() * atom->velocity.lengthSquared();
     }
-    m_kineticEnergy /= m_numberOfAtoms;
+    m_kineticEnergyPerAtom = m_kineticEnergy / (double) m_numberOfAtoms;
 }
 
 void StatisticsSampler::samplePotentialEnergy()
 {
-    m_potentialEnergy = m_system->potential()->potentialEnergy() / m_numberOfAtoms;
+    m_potentialEnergy = m_system->potential()->potentialEnergy();
+    m_potentialEnergyPerAtom = m_potentialEnergy / (double) m_numberOfAtoms;
 }
 
 void StatisticsSampler::sampleTemperature()
 {
-    m_temperature = (2*m_kineticEnergy) / 3.0;
+    m_temperature = (2*m_kineticEnergyPerAtom) / 3.0;
 }
 
 void StatisticsSampler::samplePressure()

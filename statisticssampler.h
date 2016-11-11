@@ -24,7 +24,9 @@ private:
     bool m_writeSampleToFile;
 
     double m_kineticEnergy = 0;
+    double m_kineticEnergyPerAtom = 0;
     double m_potentialEnergy = 0;
+    double m_potentialEnergyPerAtom = 0;
     double m_temperature = 0;
     double m_density = 0;
     double m_pressure = 0;
@@ -43,8 +45,11 @@ public:
     void sampleRadialDistribution(int numberOfBins);
 
     double kineticEnergy() { return m_kineticEnergy; }
+    double kineticEnergyPerAtom() { return m_kineticEnergyPerAtom; }
     double potentialEnergy() { return m_potentialEnergy; }
+    double potentialEnergyPerAtom() { return m_potentialEnergyPerAtom; }
     double totalEnergy() { return m_kineticEnergy + m_potentialEnergy; }
+    double totalEnergyPerAtom() { return m_kineticEnergyPerAtom + m_potentialEnergyPerAtom; }
     double temperature() { return m_temperature; }
     double pressure() { return m_pressure; }
     double density() { return m_density; }

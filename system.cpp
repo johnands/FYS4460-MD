@@ -156,9 +156,9 @@ void System::runSimulation() {
             cout << steps() << "      " << time() << "    "
                  << m_statisticsSampler->temperature() << "    "
                  << m_statisticsSampler->pressure() << "  "  << m_statisticsSampler->density() << "    "
-                 << m_statisticsSampler->kineticEnergy() << "     "
-                 << m_statisticsSampler->potentialEnergy() << "      "
-                 << m_statisticsSampler->totalEnergy() << endl;
+                 << m_statisticsSampler->kineticEnergyPerAtom() << "     "
+                 << m_statisticsSampler->potentialEnergyPerAtom() << "      "
+                 << m_statisticsSampler->totalEnergyPerAtom() << endl;
         }
         /*if ( m_steps == 1002) {
             { movie.saveState(this); }
