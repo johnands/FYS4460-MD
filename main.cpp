@@ -2,6 +2,7 @@
 #include "potentials/lennardjones.h"
 #include "potentials/lennardjonescelllist.h"
 #include "potentials/neuralnetwork.h"
+#include "potentials/tensorflownetwork.h"
 #include "integrators/eulercromer.h"
 #include "integrators/velocityverlet.h"
 #include "thermostats/berendsen.h"
@@ -18,6 +19,7 @@
 #include <time.h>
 #include <armadillo>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -26,8 +28,8 @@ int main(int numberOfArguments, char **argumentList)
     int numberOfUnitCells = 8;
     double initialTemperature = UnitConverter::temperatureFromSI(100);  // measured in Kelvin
     //double initialTemperature = 1.5;
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
-    //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
+    //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
     cout << "lattice: " << latticeConstant << endl;
 
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
@@ -47,6 +49,8 @@ int main(int numberOfArguments, char **argumentList)
 
     bool readFromFile = false;
     bool usePores = false;
+    string graphFileName ("../TensorFlow/TrainingData/18.11-16.12.57/frozen_graph.pb");
+    //string graphFileName ("../TensorFlow/TestC++/models/graph2.pb");
 
     System *system = new System();
     if (readFromFile) {
@@ -62,7 +66,8 @@ int main(int numberOfArguments, char **argumentList)
 
     //system->setPotential(new LennardJones(system, 1.0, 1.0));
     //system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5, 3.0));
-    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/04.11-14.58.07/graph.dat", 2.5, 3.0));
+    //system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/04.11-14.58.07/graph.dat", 2.5, 3.0));
+    system->setPotential(new TensorFlowNetwork(system, graphFileName, 2.5, 3.0));
     //system->setIntegrator(new EulerCromer(system));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
@@ -82,17 +87,6 @@ int main(int numberOfArguments, char **argumentList)
     system->setXYZName("testCell.xyz");
 
     system->runSimulation();
-
-    // test if network represent LJ well
-    /*NeuralNetwork *networkz = new NeuralNetwork(system, "../TensorFlow/TrainingData/04.11-14.58.07/graph.dat", 2.5, 3.0);
-    ofstream outFile;
-    outFile.open("../TensorFlow/networkTest.dat", ios::out);
-    arma::vec vector = arma::linspace<arma::vec>(0.8, 2.5, 1000);
-    for (int i=0; i < arma::size(vector)(0); i++) {
-        double energy = networkz->network(vector(i));
-        double derivative = networkz->backPropagation();
-        outFile << energy << " " << derivative << endl;
-    }*/
 
     return 0;
 }

@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     porosities/centeredcylinder.cpp \
     porosities/spheres.cpp \
     potentials/neuralnetwork.cpp \
-    math/activationfunctions.cpp
+    math/activationfunctions.cpp \
+    potentials/tensorflownetwork.cpp
 
 HEADERS += \
     atom.h \
@@ -57,7 +58,11 @@ HEADERS += \
     porosities/centeredcylinder.h \
     porosities/spheres.h \
     potentials/neuralnetwork.h \
-    math/activationfunctions.h
+    math/activationfunctions.h \
+    potentials/tensorflownetwork.h
+
+INCLUDEPATH += /home/johnands/QTensorFlow/include
+LIBS += -L/home/johnands/QTensorFlow/lib64 -ltensorflow
 
 LIBS += -larmadillo -lblas -llapack
 

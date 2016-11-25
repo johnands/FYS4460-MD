@@ -89,11 +89,11 @@ void NeuralNetwork::readFromFile() {
     }
 
     // write out all weights and biases
-    for (const auto i : weightsTemp)
+    /*for (const auto i : weightsTemp)
         std::cout << i << std::endl;
     std::cout << std::endl;
     for (const auto i : m_biases)
-        std::cout << i << std::endl;
+        std::cout << i << std::endl;*/
 
     // resize weights and biases matrices to correct shapes
     m_weights.resize(m_nLayers+1);
@@ -105,7 +105,7 @@ void NeuralNetwork::readFromFile() {
     for (int i=0; i < m_nLayers-1; i++) {
         m_weights[i+1] = weightsTemp[i*m_nNodes+1];
         for (int j=1; j < m_nNodes; j++) {
-            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[i+1+j]);
+            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[i*nodes+1+j]);
         }
     }
 
