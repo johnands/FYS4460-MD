@@ -6,7 +6,7 @@
 CenteredCylinder::CenteredCylinder(System *system, bool usePores) :
     Porosities(system) {
     if (usePores) { makePores(); }
-    std::cout << "poreradius: " << m_poreRadius << std::endl;
+    //std::cout << "poreradius: " << m_poreRadius << std::endl;
 }
 
 void CenteredCylinder::makePores() {

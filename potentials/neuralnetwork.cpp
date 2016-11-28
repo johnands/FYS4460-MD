@@ -17,9 +17,6 @@ NeuralNetwork::NeuralNetwork(System *system, const char *filename,
     m_rCutSquared = rCut*rCut;
     m_neighbourCut = neighbourCut;
 
-    double r2 = 1.0 / m_rCutSquared;
-    m_potentialCut = 4*r2*r2*r2*(r2*r2*r2 - 1);
-
     m_updateLists = 0;
 }
 
@@ -53,7 +50,7 @@ void NeuralNetwork::readFromFile() {
         //std::cout << line << std::endl;
 
         if ( line.empty() )
-        { std::cout << "yes" << std::endl; break;}
+        { break;}
 
 
         // store all weights in a vector
@@ -105,7 +102,7 @@ void NeuralNetwork::readFromFile() {
     for (int i=0; i < m_nLayers-1; i++) {
         m_weights[i+1] = weightsTemp[i*m_nNodes+1];
         for (int j=1; j < m_nNodes; j++) {
-            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[i*nodes+1+j]);
+            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[i*m_nNodes+1+j]);
         }
     }
 
@@ -122,11 +119,11 @@ void NeuralNetwork::readFromFile() {
         m_weightsTransposed[i] = m_weights[i].t();
 
     // write out entire system for comparison
-    for (const auto i : m_weights)
+    /*for (const auto i : m_weights)
         std::cout << i << std::endl;
 
     for (const auto i : m_biases)
-        std::cout << i << std::endl;
+        std::cout << i << std::endl;*/
 }
 
 double NeuralNetwork::network(double dataPoint) {
@@ -228,7 +225,9 @@ void NeuralNetwork::calculateForces() {
             }
             else {
                 // if not, zero force and energy
-                forceOnAtom = dr*0;
+                forceOnAtom[0] = 0;
+                forceOnAtom[1] = 0;
+                forceOnAtom[2] = 0;
             }
 
             // add contribution to force on atom i and j

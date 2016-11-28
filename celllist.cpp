@@ -21,9 +21,9 @@ void CellList::setupCells() {
     m_numberOfCellsEachDimension = m_system->systemSize().x() / m_rCut;
     if (m_numberOfCellsEachDimension < 1.0) { m_numberOfCellsEachDimension = 1.0; }
 
-    cout << "system size: " << m_system->systemSize().x() << endl;
-    cout << "cutoff: " << m_rCut << endl;
-    cout << "number of cells: " << m_numberOfCellsEachDimension << endl;
+    cout << "System size: " << m_system->systemSize().x() << endl;
+    cout << "Cutoff: " << m_rCut << endl;
+    cout << "Number of neighbour cells: " << m_numberOfCellsEachDimension*3 << endl;
 
     // make room in memory
     m_cells.resize( m_numberOfCellsEachDimension,

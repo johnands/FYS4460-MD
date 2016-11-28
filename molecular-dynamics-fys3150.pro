@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     porosities/spheres.cpp \
     potentials/neuralnetwork.cpp \
     math/activationfunctions.cpp \
-    potentials/tensorflownetwork.cpp
+    potentials/tensorflownetwork.cpp \
+    examples.cpp
 
 HEADERS += \
     atom.h \
@@ -59,7 +60,8 @@ HEADERS += \
     porosities/spheres.h \
     potentials/neuralnetwork.h \
     math/activationfunctions.h \
-    potentials/tensorflownetwork.h
+    potentials/tensorflownetwork.h \
+    examples.h
 
 INCLUDEPATH += /home/johnands/QTensorFlow/include
 LIBS += -L/home/johnands/QTensorFlow/lib64 -ltensorflow

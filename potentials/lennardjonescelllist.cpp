@@ -21,7 +21,7 @@ LennardJonesCellList::LennardJonesCellList(System *system, double sigma, double 
     m_cellList->updateCells();
     m_updateLists = 0;
     double r2 = 1.0 / m_rCutSquared;
-    m_potentialCut = 4*r2*r2*r2*(r2*r2*r2 - 1);
+    m_potentialCut = r2*r2*r2*(r2*r2*r2 - 1);
 }
 
 void LennardJonesCellList::calculateForces()
@@ -73,6 +73,7 @@ void LennardJonesCellList::calculateForces()
             // add contribution to force on atom i and j
             atom1->force += forceOnAtom;
             atom2->force -= forceOnAtom;   // Newton's third law
+
 
             if (m_system->getUseExternalForce()) {
                 atom1->force[0] += 1.0;

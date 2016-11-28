@@ -126,7 +126,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
     }
 }
 
-void System::runSimulation() {
+int System::runSimulation() {
 
     m_statisticsSampler =  new StatisticsSampler(this);
     IO movie; // To write the state to file
@@ -174,6 +174,8 @@ void System::runSimulation() {
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
     if (getMakeXYZ()) { movie.close(); }
+
+    return true;
 }
 
 void System::calculateForces() {

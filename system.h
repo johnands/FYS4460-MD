@@ -48,7 +48,7 @@ public:
     void removeTotalMomentum();
     void calculateForces();
     void step(double dt);
-    void runSimulation();
+    int runSimulation();
     void readFromStateFile(const char *filename, double mass, double latticeConstant,
                            int numberOfUnitCellsEachDimension);
     void removeAtom(int index);

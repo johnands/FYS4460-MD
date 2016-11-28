@@ -1,4 +1,5 @@
 #include "math/random.h"
+#include "examples.h"
 #include "potentials/lennardjones.h"
 #include "potentials/lennardjonescelllist.h"
 #include "potentials/neuralnetwork.h"
@@ -16,25 +17,11 @@
 #include "unitconverter.h"
 #include "celllist.h"
 #include <iostream>
-#include <time.h>
-#include <armadillo>
-#include <fstream>
-#include <string>
 
-using namespace std;
+using std::cout;
+using std::endl;
 
-int main(int numberOfArguments, char **argumentList)
-{
-    int numberOfUnitCells = 8;
-    double initialTemperature = UnitConverter::temperatureFromSI(100);  // measured in Kelvin
-    //double initialTemperature = 1.5;
-    //double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72); // measured in angstroms
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
-    cout << "lattice: " << latticeConstant << endl;
-
-    double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
-
-    double dt = 0.01; //UnitConverter::timeFromSI(5e-14); // Measured in seconds
+int main(int numberOfArguments, char **argumentList) {
 
     cout << "One unit of length is "      << UnitConverter::lengthToSI(1.0)      << " meters"        << endl;
     cout << "One unit of velocity is "    << UnitConverter::velocityToSI(1.0)    << " meters/second" << endl;
@@ -43,50 +30,15 @@ int main(int numberOfArguments, char **argumentList)
     cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K"             << endl;
     cout << "One unit of energy is "      << UnitConverter::energyToSI(1.0)      << " J"             << endl;
 
-    bool BoltzmannDist = true;             // initial velocities given by Boltzmann distribution
-    double maxMinVelocity = 1.5;           // uniformly distributed velocities [-v, v]
-    double tau = 10*dt;
-
-    bool readFromFile = false;
-    bool usePores = false;
-    string graphFileName ("../TensorFlow/TrainingData/18.11-16.12.57/frozen_graph.pb");
-    //string graphFileName ("../TensorFlow/TestC++/models/graph2.pb");
-
-    System *system = new System();
-    if (readFromFile) {
-        system->readFromStateFile("thermalizedFluidNc20T15Nt1001.xyz", mass, latticeConstant,
-                                      numberOfUnitCells);
-    }
-    else {
-        system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
-                                mass, BoltzmannDist, maxMinVelocity);
-    }
-
-    system->setPores(new CenteredCylinder(system, usePores));
-
-    //system->setPotential(new LennardJones(system, 1.0, 1.0));
-    //system->setPotential(new LennardJonesCellList(system, 1.0, 1.0, 2.5, 3.0));
-    //system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/04.11-14.58.07/graph.dat", 2.5, 3.0));
-    system->setPotential(new TensorFlowNetwork(system, graphFileName, 2.5, 3.0));
-    //system->setIntegrator(new EulerCromer(system));
-    system->setTimeStep(dt);
-    system->setIntegrator(new VelocityVerlet(system));
-    system->setThermostat(new Berendsen(system, initialTemperature, tau));
-    system->setUseThermoStat(false);
-    system->setThermalization(0);
-
-    system->setNumberOfTimeSteps(501);
-    system->setTemperature(initialTemperature);
-    system->removeTotalMomentum();
-
-    //system->setPeriodicBoundaries(true);
-    system->setUseExternalForce(false);
-    system->setWriteSample(false);
-    system->setRadialDistribution(false);
-    system->setMakeXYZ(false);
-    system->setXYZName("testCell.xyz");
-
-    system->runSimulation();
-
-    return 0;
+    //return Examples::lennardJonesFCC();
+    //return Examples::lennardJonesFCCCellList();
+    //return Examples::lennardJonesFCCNeuralNetwork();
+    //return Examples::lennardJonesFCCTensorFlow();
+    //return Examples::lennardJonesLiquid();
+    //return Examples::loadFromFile();
+    //return Examples::lennardJonesFCCNanoCylinder();
+    //return Examples::lennardJonesFCCNanoSpheres();
+    //return Examples::computeTemperatureFluctuations();
+    //return Examples::computeRadialDistributionFunction();
+    return Examples::compareNeuralNetworkError();
 }
