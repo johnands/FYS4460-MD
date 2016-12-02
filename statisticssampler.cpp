@@ -97,6 +97,17 @@ void StatisticsSampler::sampleMeanSquareDisplacement()
     m_meanSquareDisplacement /= m_numberOfAtoms;
 }
 
+void StatisticsSampler::sampleFlowVelocity() {
+
+    m_flowVelocity = 0;
+    for (Atom *atom : m_system->atoms()) {
+        if ( atom->movingAtom() ) {
+            m_flowVelocity += atom->velocity.x();
+        }
+    }
+    m_flowVelocity /= m_numberOfAtoms;
+}
+
 void StatisticsSampler::sampleRadialDistribution(int numberOfBins) {
     if (m_firstRadial) {
 

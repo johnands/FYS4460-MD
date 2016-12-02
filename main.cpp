@@ -32,7 +32,7 @@ int main(int numberOfArguments, char **argumentList) {
 
     //return Examples::lennardJonesFCC();
     //return Examples::lennardJonesFCCCellList();
-    //return Examples::lennardJonesFCCNeuralNetwork();
+    return Examples::lennardJonesFCCNeuralNetwork();
     //return Examples::lennardJonesFCCTensorFlow();
     //return Examples::lennardJonesLiquid();
     //return Examples::loadFromFile();
@@ -40,5 +40,6 @@ int main(int numberOfArguments, char **argumentList) {
     //return Examples::lennardJonesFCCNanoSpheres();
     //return Examples::computeTemperatureFluctuations();
     //return Examples::computeRadialDistributionFunction();
-    return Examples::compareNeuralNetworkError();
+    //return Examples::compareNeuralNetworkError();
+    //return Examples::testBackpropagation();
 }

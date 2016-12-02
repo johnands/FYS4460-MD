@@ -360,12 +360,33 @@ int Examples::computeRadialDistributionFunction() {
 
 int Examples::compareNeuralNetworkError() {
 
+    System *system = new System();
+
     // check if error of NN has same shape as in python
-    int numberOfPoints = 500;
+    int numberOfPoints = 1000;
+    std::ofstream outFile;
+    outFile.open("../TensorFlow/Tests/TrainLennardJones/errorLJC.dat");
     arma::vec distances = arma::linspace<arma::vec>(0.8, 2.5, numberOfPoints);
     NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0);
     for (int i=0; i < numberOfPoints; i++) {
         double energy = networkPotential->network(distances(i));
-
+        double derivative = networkPotential->backPropagation();
+        outFile << energy << " " << derivative << endl;
     }
+    outFile.close();
+    return true;
+}
+
+
+
+int Examples::testBackpropagation() {
+
+    System *system = new System();
+    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
+    double energy = networkPotential->network(0.9);
+    cout << energy << endl;
+    double derivative = networkPotential->backPropagation();
+    cout << derivative << endl;
+
+    return true;
 }

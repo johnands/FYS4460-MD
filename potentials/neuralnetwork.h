@@ -16,7 +16,6 @@ public:
     double network(double dataPoint);
     void calculateForces();
     double backPropagation();
-    void clearVectors();
 
 private:
     const char *m_filename;
@@ -35,6 +34,7 @@ private:
     double m_rCutSquared = 0.0;
     double m_neighbourCut = 0.0;
     double m_potentialCut = 0.0;
+    int m_maxNeighbours = 0;
 };
 
 #endif // NEURALNETWORK_H

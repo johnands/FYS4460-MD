@@ -16,6 +16,7 @@ private:
     double m_potentialCut = 0.0;
     int    m_updateLists = 0;
     CellList *m_cellList = nullptr;
+    int m_maxNeighbours = 0;
 
 public:
     LennardJonesCellList(System *system, double sigma, double epsilon, double rCut, double neighbourCut);

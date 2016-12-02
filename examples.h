@@ -14,5 +14,6 @@ public:
     static int computeTemperatureFluctuations();
     static int computeRadialDistributionFunction();
     static int compareNeuralNetworkError();
+    static int testBackpropagation();
 };
 

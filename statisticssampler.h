@@ -31,6 +31,7 @@ private:
     double m_density = 0;
     double m_pressure = 0;
     double m_meanSquareDisplacement = 0;
+    double m_flowVelocity = 0;
 
 public:
     StatisticsSampler(System *system);
@@ -43,6 +44,7 @@ public:
     void sampleDensity();
     void sampleMeanSquareDisplacement();
     void sampleRadialDistribution(int numberOfBins);
+    void sampleFlowVelocity();
 
     double kineticEnergy() { return m_kineticEnergy; }
     double kineticEnergyPerAtom() { return m_kineticEnergyPerAtom; }
@@ -54,5 +56,6 @@ public:
     double pressure() { return m_pressure; }
     double density() { return m_density; }
     double MeanSquareDisplacement() { return m_meanSquareDisplacement; }
+    double flowVelocity() { return m_flowVelocity; }
 };
 #endif
