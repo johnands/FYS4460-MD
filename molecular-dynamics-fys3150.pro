@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     potentials/neuralnetwork.cpp \
     math/activationfunctions.cpp \
     potentials/tensorflownetwork.cpp \
-    examples.cpp
+    examples.cpp \
+    potentials/manyneighbournn.cpp
 
 HEADERS += \
     atom.h \
@@ -61,7 +62,8 @@ HEADERS += \
     potentials/neuralnetwork.h \
     math/activationfunctions.h \
     potentials/tensorflownetwork.h \
-    examples.h
+    examples.h \
+    potentials/manyneighbournn.h
 
 INCLUDEPATH += /home/johnands/QTensorFlow/include
 LIBS += -L/home/johnands/QTensorFlow/lib64 -ltensorflow

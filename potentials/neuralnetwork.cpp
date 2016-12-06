@@ -2,11 +2,15 @@
 #include "celllist.h"
 #include "../math/activationfunctions.h"
 
+using std::cout;
+using std::endl;
+
 NeuralNetwork::NeuralNetwork(System *system, const char *filename,
-                             double rCut, double neighbourCut) :
+                             double rCut, double neighbourCut, int numberOfNeighbours) :
                Potential(system) {
 
     m_filename = filename;
+    m_numberOfNeighbours = numberOfNeighbours;
     readFromFile();
 
     m_cellList = new CellList(system, rCut, neighbourCut);
@@ -18,13 +22,10 @@ NeuralNetwork::NeuralNetwork(System *system, const char *filename,
     m_neighbourCut = neighbourCut;
 
     m_updateLists = 0;
-    m_maxNeighbours = 0;
 }
 
 
 double NeuralNetwork::network(double dataPoint) {
-    // the data needs to be a 1x1 armadillo matrix
-    // maybe more than one data point can be processed simultaneously?
 
     // convert data point to 1x1 matrix
     arma::mat data(1,1); data(0,0) = dataPoint;
@@ -134,10 +135,6 @@ void NeuralNetwork::calculateForces() {
             atom1->force += forceOnAtom;
             atom2->force -= forceOnAtom;   // Newton's third law
 
-            if (m_system->getUseExternalForce()) {
-                atom1->force[0] += 1.0;
-            }
-
             // dot product of Fij and dr
             pressure += forceOnAtom[0]*dr[0] + forceOnAtom[1]*dr[1] + forceOnAtom[2]*dr[2];
         }
@@ -179,8 +176,7 @@ void NeuralNetwork::readFromFile() {
         //std::cout << line << std::endl;
 
         if ( line.empty() )
-        { break;}
-
+            break;
 
         // store all weights in a vector
         double buffer;                  // have a buffer string
@@ -226,16 +222,21 @@ void NeuralNetwork::readFromFile() {
 
     // first hidden layer
     m_weights[0]  = weightsTemp[0];
+    for (int i=0; i < m_numberOfNeighbours-1; i++) {
+        m_weights[0] = arma::join_cols(m_weights[0], weightsTemp[i+1]);
+    }
 
     // following hidden layers
     for (int i=0; i < m_nLayers-1; i++) {
-        m_weights[i+1] = weightsTemp[i*m_nNodes+1];
+        int currentRow = i*m_nNodes + m_numberOfNeighbours;
+        m_weights[i+1] = weightsTemp[currentRow];
         for (int j=1; j < m_nNodes; j++) {
-            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[i*m_nNodes+1+j]);
+            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[currentRow+j]);
         }
     }
 
     // output layer
+    // this is currently only valid for networks with one output
     arma::mat outputLayer = weightsTemp.back();
     m_weights[m_nLayers] = arma::reshape(outputLayer, m_nNodes, 1);
 

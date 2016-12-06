@@ -3,6 +3,7 @@
 #include "potentials/lennardjones.h"
 #include "potentials/lennardjonescelllist.h"
 #include "potentials/neuralnetwork.h"
+#include "potentials/manyneighbournn.h"
 #include "potentials/tensorflownetwork.h"
 #include "integrators/eulercromer.h"
 #include "integrators/velocityverlet.h"
@@ -17,6 +18,7 @@
 #include "unitconverter.h"
 #include "celllist.h"
 #include <iostream>
+#include <armadillo>
 
 using std::cout;
 using std::endl;
@@ -32,7 +34,8 @@ int main(int numberOfArguments, char **argumentList) {
 
     //return Examples::lennardJonesFCC();
     //return Examples::lennardJonesFCCCellList();
-    return Examples::lennardJonesFCCNeuralNetwork();
+    //return Examples::lennardJonesFCCNeuralNetwork();
+    //return Examples::lennardJonesFCCManyNeighbourNeuralNetwork();
     //return Examples::lennardJonesFCCTensorFlow();
     //return Examples::lennardJonesLiquid();
     //return Examples::loadFromFile();
@@ -41,5 +44,6 @@ int main(int numberOfArguments, char **argumentList) {
     //return Examples::computeTemperatureFluctuations();
     //return Examples::computeRadialDistributionFunction();
     //return Examples::compareNeuralNetworkError();
+    return Examples::compareManyNeighbourNeuralNetworkError();
     //return Examples::testBackpropagation();
 }

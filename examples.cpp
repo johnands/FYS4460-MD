@@ -3,6 +3,7 @@
 #include "potentials/lennardjones.h"
 #include "potentials/lennardjonescelllist.h"
 #include "potentials/neuralnetwork.h"
+#include "potentials/manyneighbournn.h"
 #include "potentials/tensorflownetwork.h"
 #include "integrators/eulercromer.h"
 #include "integrators/velocityverlet.h"
@@ -24,7 +25,6 @@
 
 using std::cout;
 using std::endl;
-
 
 int Examples::lennardJonesFCC() {
 
@@ -125,7 +125,7 @@ int Examples::lennardJonesFCCNeuralNetwork() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0));
+    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0, 1));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
@@ -146,6 +146,46 @@ int Examples::lennardJonesFCCNeuralNetwork() {
 
 }
 
+
+int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
+
+    int numberOfUnitCells = 12;
+    double initialTemperature = 1.0;  // measured in Kelvin
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
+    double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
+    double dt = 0.01;  // Measured in seconds
+
+    bool BoltzmannDist = true;             // initial velocities given by Boltzmann distribution
+    double maxMinVelocity = 1.5;           // uniformly distributed velocities [-v, v]
+    double tau = 10*dt;                    // relaxation time for Berendsen and Andersen
+
+    bool usePores = false;
+
+    System *system = new System();
+    system->createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature,
+                             mass, BoltzmannDist, maxMinVelocity);
+    system->setPores(new CenteredCylinder(system, usePores));
+
+    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat", 2.5, 3.0, 20));
+    system->setTimeStep(dt);
+    system->setIntegrator(new VelocityVerlet(system));
+    system->setThermostat(new Berendsen(system, initialTemperature, tau));
+    system->setUseThermoStat(false);
+    system->setThermalization(0);
+
+    system->setNumberOfTimeSteps(501);
+    system->setTemperature(initialTemperature);
+    system->removeTotalMomentum();
+
+    system->setUseExternalForce(false);
+    system->setWriteSample(false);
+    system->setRadialDistribution(false);
+    system->setMakeXYZ(false);
+    system->setXYZName("LJNeighbourFCC.xyz");
+
+    system->runSimulation();
+
+}
 
 int Examples::lennardJonesFCCTensorFlow() {
 
@@ -365,15 +405,36 @@ int Examples::compareNeuralNetworkError() {
     // check if error of NN has same shape as in python
     int numberOfPoints = 1000;
     std::ofstream outFile;
-    outFile.open("../TensorFlow/Tests/TrainLennardJones/errorLJC.dat");
+    //outFile.open("../TensorFlow/Tests/TrainLennardJones/errorLJC.dat");
     arma::vec distances = arma::linspace<arma::vec>(0.8, 2.5, numberOfPoints);
-    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0);
+    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0, 1);
     for (int i=0; i < numberOfPoints; i++) {
         double energy = networkPotential->network(distances(i));
         double derivative = networkPotential->backPropagation();
-        outFile << energy << " " << derivative << endl;
+        //outFile << energy << " " << derivative << endl;
     }
-    outFile.close();
+    //outFile.close();
+    return true;
+}
+
+
+int Examples::compareManyNeighbourNeuralNetworkError() {
+
+    System *system = new System();
+
+    // check if error of NN has same shape as in python
+    int numberOfNeighbours = 20;
+    std::ofstream outFile;
+    //outFile.open("../TensorFlow/Tests/TrainLennardJones/ManyBodyNetwork/error20NeighboursLJC.dat");
+    arma::vec distances = arma::linspace<arma::vec>(0.8, 2.0, numberOfNeighbours);
+    arma::mat inputVector = arma::resize(distances, 1, numberOfNeighbours);
+    ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system, "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat", 2.5, 3.0, 20);
+
+    double energy = networkPotential->network(inputVector);
+    arma::mat derivative = networkPotential->backPropagation();
+    cout << energy << " " << derivative << endl;
+
+    //outFile.close();
     return true;
 }
 
@@ -382,7 +443,7 @@ int Examples::compareNeuralNetworkError() {
 int Examples::testBackpropagation() {
 
     System *system = new System();
-    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
+    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0, 1);
     double energy = networkPotential->network(0.9);
     cout << energy << endl;
     double derivative = networkPotential->backPropagation();

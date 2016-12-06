@@ -11,22 +11,22 @@ class NeuralNetwork : public Potential {
 
 public:
     NeuralNetwork(System *system, const char *filename,
-                  double rCut, double neighbourCut);
+                  double rCut, double neighbourCut, int numberOfNeighbours);
     void readFromFile();
     double network(double dataPoint);
-    void calculateForces();
+    virtual void calculateForces();
     double backPropagation();
 
-private:
+protected:
     const char *m_filename;
     int m_nLayers;
     int m_nNodes;
-    std::vector<arma::mat> m_weights = std::vector<arma::mat>();
-    std::vector<arma::mat> m_weightsTransposed = std::vector<arma::mat>();
-    std::vector<arma::mat> m_biases  = std::vector<arma::mat>();
-    std::vector<arma::mat> m_preActivations = std::vector<arma::mat>();
-    std::vector<arma::mat> m_activations = std::vector<arma::mat>();
-    std::vector<arma::mat> m_derivatives = std::vector<arma::mat>();
+    std::vector<arma::mat> m_weights            = std::vector<arma::mat>();
+    std::vector<arma::mat> m_weightsTransposed  = std::vector<arma::mat>();
+    std::vector<arma::mat> m_biases             = std::vector<arma::mat>();
+    std::vector<arma::mat> m_preActivations     = std::vector<arma::mat>();
+    std::vector<arma::mat> m_activations        = std::vector<arma::mat>();
+    std::vector<arma::mat> m_derivatives        = std::vector<arma::mat>();
     std::ofstream m_outFile;
     CellList *m_cellList = nullptr;
     int    m_updateLists = 0;
@@ -34,7 +34,7 @@ private:
     double m_rCutSquared = 0.0;
     double m_neighbourCut = 0.0;
     double m_potentialCut = 0.0;
-    int m_maxNeighbours = 0;
+    int m_numberOfNeighbours = 1;
 };
 
 #endif // NEURALNETWORK_H
