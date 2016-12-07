@@ -6,11 +6,10 @@ using std::cout;
 using std::endl;
 
 NeuralNetwork::NeuralNetwork(System *system, const char *filename,
-                             double rCut, double neighbourCut, int numberOfNeighbours) :
+                             double rCut, double neighbourCut) :
                Potential(system) {
 
     m_filename = filename;
-    m_numberOfNeighbours = numberOfNeighbours;
     readFromFile();
 
     m_cellList = new CellList(system, rCut, neighbourCut);
@@ -87,6 +86,7 @@ void NeuralNetwork::calculateForces() {
     }
 
     m_updateLists++;
+    cout << "yes" << endl;
 
     for (int i=0; i < m_system->atoms().size(); i++) {
         Atom *atom1 = m_system->atoms()[i];
@@ -156,8 +156,11 @@ void NeuralNetwork::readFromFile() {
 
     // process first line
     std::string activation;
-    input >> m_nLayers >> m_nNodes >> activation;
-    std::cout << m_nLayers << " " << m_nNodes << " " << activation << std::endl;
+    input >> m_nLayers >> m_nNodes >> activation >> m_numberOfNeighbours;
+    std::cout << "Layers: " << m_nLayers << std::endl;
+    std::cout << "Nodes: " << m_nNodes << std::endl;
+    std::cout << "Activation: " << activation << std::endl;
+    std::cout << "Neighbours: " << m_numberOfNeighbours << std::endl;
 
     // set sizes
     m_preActivations.resize(m_nLayers+2);

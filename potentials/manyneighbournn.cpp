@@ -6,9 +6,8 @@ using std::cout;
 using std::endl;
 
 ManyNeighbourNN::ManyNeighbourNN(System *system, const char *filename,
-                                 double rCut, double neighbourCut,
-                                 int numberOfNeighbours) :
-                 NeuralNetwork(system, filename, rCut, neighbourCut, numberOfNeighbours) {
+                                 double rCut, double neighbourCut) :
+                 NeuralNetwork(system, filename, rCut, neighbourCut) {
 
 }
 
@@ -16,11 +15,9 @@ ManyNeighbourNN::ManyNeighbourNN(System *system, const char *filename,
 double ManyNeighbourNN::network(arma::mat inputVector) {
     // input vector is a 1xinputs vector
 
-    cout << "yes" << endl;
     // linear activation for input layer
     m_preActivations[0] = inputVector;
     m_activations[0] = m_preActivations[0];
-    cout << "shape: " << arma::size(m_activations[0]) << endl;
 
     // hidden layers
     for (int i=0; i < m_nLayers; i++) {
@@ -28,13 +25,11 @@ double ManyNeighbourNN::network(arma::mat inputVector) {
         // weights[0] are the weights connecting input layer to first hidden layer
         m_preActivations[i+1] = m_activations[i]*m_weights[i] + m_biases[i];
         m_activations[i+1] = ActivationFunctions::sigmoid(m_preActivations[i+1]);
-        cout << "shape: " << arma::size(m_activations[i+1]) << endl;
     }
 
     // linear activation for output layer
     m_preActivations[m_nLayers+1] = m_activations[m_nLayers]*m_weights[m_nLayers] + m_biases[m_nLayers];
     m_activations[m_nLayers+1] = m_preActivations[m_nLayers+1];
-    cout << "shape: " << arma::size(m_activations[m_nLayers+1]) << endl;
 
     // return activation of output neuron, which is a 1x1-matrix
     return m_activations[m_nLayers+1](0,0);
@@ -79,7 +74,6 @@ void ManyNeighbourNN::calculateForces() {
 
     arma::mat distanceNeighbours(1, m_numberOfNeighbours);
     std::vector<std::vector<double> > drNeighbours(m_numberOfNeighbours, std::vector<double>(3));
-    std::vector<Atom *> atomNeighbours(m_numberOfNeighbours);
     for (int i=0; i < m_system->atoms().size(); i++) {
         Atom *atom1 = m_system->atoms()[i];
 
@@ -107,11 +101,10 @@ void ManyNeighbourNN::calculateForces() {
             // regardless of cut etc.
             if (neighbourCount < m_numberOfNeighbours) {
                 double distance = sqrt(dr2);
-                distanceNeighbours(1, neighbourCount) = distance;
+                distanceNeighbours(0, neighbourCount) = distance;
                 drNeighbours[neighbourCount][0] = dr[0];
                 drNeighbours[neighbourCount][1] = dr[1];
                 drNeighbours[neighbourCount][2] = dr[2];
-                atomNeighbours[neighbourCount] = atom2;
                 neighbourCount++;
             }
             else {
@@ -133,13 +126,11 @@ void ManyNeighbourNN::calculateForces() {
         for (int k=0; k < m_numberOfNeighbours; k++) {
 
             vec3 forceOnAtom;
-            double drInverse = 1.0 / distanceNeighbours(1,k);
-            forceOnAtom[0] = -dEdr(1,k)*drInverse*drNeighbours[k][0];
-            forceOnAtom[1] = -dEdr(1,k)*drInverse*drNeighbours[k][1];
-            forceOnAtom[2] = -dEdr(1,k)*drInverse*drNeighbours[k][2];
-
+            double drInverse = 1.0 / distanceNeighbours(0,k);
+            forceOnAtom[0] = -dEdr(0,k)*drInverse*drNeighbours[k][0];
+            forceOnAtom[1] = -dEdr(0,k)*drInverse*drNeighbours[k][1];
+            forceOnAtom[2] = -dEdr(0,k)*drInverse*drNeighbours[k][2];
             atom1->force += forceOnAtom;
-            atomNeighbours[k]->force -= forceOnAtom;   // Newton's third law
 
             // dot product of Fij and dr
             pressure += forceOnAtom[0]*drNeighbours[k][0] +

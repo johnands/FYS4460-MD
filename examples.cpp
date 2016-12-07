@@ -125,7 +125,7 @@ int Examples::lennardJonesFCCNeuralNetwork() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0, 1));
+    system->setPotential(new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
@@ -166,7 +166,7 @@ int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat", 2.5, 3.0, 20));
+    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat", 2.5, 3.0));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
@@ -407,11 +407,11 @@ int Examples::compareNeuralNetworkError() {
     std::ofstream outFile;
     //outFile.open("../TensorFlow/Tests/TrainLennardJones/errorLJC.dat");
     arma::vec distances = arma::linspace<arma::vec>(0.8, 2.5, numberOfPoints);
-    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0, 1);
+    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0);
     for (int i=0; i < numberOfPoints; i++) {
         double energy = networkPotential->network(distances(i));
         double derivative = networkPotential->backPropagation();
-        //outFile << energy << " " << derivative << endl;
+        outFile << energy << " " << derivative << endl;
     }
     //outFile.close();
     return true;
@@ -426,15 +426,21 @@ int Examples::compareManyNeighbourNeuralNetworkError() {
     int numberOfNeighbours = 20;
     std::ofstream outFile;
     //outFile.open("../TensorFlow/Tests/TrainLennardJones/ManyBodyNetwork/error20NeighboursLJC.dat");
-    arma::vec distances = arma::linspace<arma::vec>(0.8, 2.0, numberOfNeighbours);
-    arma::mat inputVector = arma::resize(distances, 1, numberOfNeighbours);
-    ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system, "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat", 2.5, 3.0, 20);
+    arma::vec distances = arma::linspace<arma::vec>(2.0, 0.8, numberOfNeighbours);
+    arma::mat inputVector(1,numberOfNeighbours);
+    for (int i=0; i < numberOfNeighbours; i++) {
+        inputVector(0,i) = distances(i);
+    }
+    cout << inputVector << endl;
+    ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system,
+                                                            "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat",
+                                                            2.5, 3.0);
 
     double energy = networkPotential->network(inputVector);
     arma::mat derivative = networkPotential->backPropagation();
     cout << energy << " " << derivative << endl;
 
-    //outFile.close();
+    outFile.close();
     return true;
 }
 
@@ -443,7 +449,7 @@ int Examples::compareManyNeighbourNeuralNetworkError() {
 int Examples::testBackpropagation() {
 
     System *system = new System();
-    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0, 1);
+    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
     double energy = networkPotential->network(0.9);
     cout << energy << endl;
     double derivative = networkPotential->backPropagation();

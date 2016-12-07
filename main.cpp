@@ -35,7 +35,7 @@ int main(int numberOfArguments, char **argumentList) {
     //return Examples::lennardJonesFCC();
     //return Examples::lennardJonesFCCCellList();
     //return Examples::lennardJonesFCCNeuralNetwork();
-    //return Examples::lennardJonesFCCManyNeighbourNeuralNetwork();
+    return Examples::lennardJonesFCCManyNeighbourNeuralNetwork();
     //return Examples::lennardJonesFCCTensorFlow();
     //return Examples::lennardJonesLiquid();
     //return Examples::loadFromFile();
@@ -44,6 +44,6 @@ int main(int numberOfArguments, char **argumentList) {
     //return Examples::computeTemperatureFluctuations();
     //return Examples::computeRadialDistributionFunction();
     //return Examples::compareNeuralNetworkError();
-    return Examples::compareManyNeighbourNeuralNetworkError();
+    //return Examples::compareManyNeighbourNeuralNetworkError();
     //return Examples::testBackpropagation();
 }

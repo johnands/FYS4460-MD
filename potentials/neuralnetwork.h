@@ -11,7 +11,7 @@ class NeuralNetwork : public Potential {
 
 public:
     NeuralNetwork(System *system, const char *filename,
-                  double rCut, double neighbourCut, int numberOfNeighbours);
+                  double rCut, double neighbourCut);
     void readFromFile();
     double network(double dataPoint);
     virtual void calculateForces();
@@ -34,7 +34,7 @@ protected:
     double m_rCutSquared = 0.0;
     double m_neighbourCut = 0.0;
     double m_potentialCut = 0.0;
-    int m_numberOfNeighbours = 1;
+    int m_numberOfNeighbours = 0.0;
 };
 
 #endif // NEURALNETWORK_H
