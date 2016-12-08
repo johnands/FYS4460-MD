@@ -227,24 +227,26 @@ void NeuralNetwork::readFromFile() {
     int currentRow = 0;
     m_weights[0]  = weightsTemp[currentRow];
     for (int i=0; i < m_numberOfNeighbours-1; i++) {
-        m_weights[0] = arma::join_cols(m_weights[0], weightsTemp[i+1]);
+        currentRow++;
+        m_weights[0] = arma::join_cols(m_weights[0], weightsTemp[currentRow]);
     }
 
     // following hidden layers
-    int currentRow = m_numberOfNeighbours;
     for (int i=0; i < m_nLayers-1; i++) {
-        currentRow = i*m_nNodes + m_numberOfNeighbours;
+        currentRow++;
         m_weights[i+1] = weightsTemp[currentRow];
         for (int j=1; j < m_nNodes; j++) {
-            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[currentRow+j]);
+            currentRow++;
+            m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[currentRow]);
         }
     }
 
     // output layer
-    currentRow += m_nNodes;
+    currentRow++;
     arma::mat outputLayer = weightsTemp[currentRow];
     for (int i=0; i < m_numberOfOutputs-1; i++) {
-        outputLayer = arma::join_cols(outputLayer, weightsTemp[currentRow+i]);
+        currentRow++;
+        outputLayer = arma::join_cols(outputLayer, weightsTemp[currentRow]);
     }
     m_weights[m_nLayers] = arma::reshape(outputLayer, m_nNodes, m_numberOfOutputs);
 

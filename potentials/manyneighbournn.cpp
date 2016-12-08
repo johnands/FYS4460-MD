@@ -31,7 +31,7 @@ arma::mat ManyNeighbourNN::network(arma::mat inputVector) {
     m_preActivations[m_nLayers+1] = m_activations[m_nLayers]*m_weights[m_nLayers] + m_biases[m_nLayers];
     m_activations[m_nLayers+1] = m_preActivations[m_nLayers+1];
 
-    // return activation of output neuron, which is a 1x1-matrix
+    // return activation of output neurons
     return m_activations[m_nLayers+1];
 }
 

@@ -426,23 +426,21 @@ int Examples::compareManyNeighbourNeuralNetworkError() {
 
     // check if error of NN has same shape as in python
     int numberOfNeighbours = 20;
-    std::ofstream outFile;
+    //std::ofstream outFile;
     //outFile.open("../TensorFlow/Tests/TrainLennardJones/ManyBodyNetwork/error20NeighboursLJC.dat");
-    arma::vec distances = arma::linspace<arma::vec>(2.0, 0.8, numberOfNeighbours);
+    arma::vec distances = arma::linspace<arma::vec>(0.8, 2.5, numberOfNeighbours);
     arma::mat inputVector(1,numberOfNeighbours);
     for (int i=0; i < numberOfNeighbours; i++) {
         inputVector(0,i) = distances(i);
     }
-    cout << inputVector << endl;
     ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system,
-                                                            "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat",
+                                                            "../TensorFlow/TrainingData/08.12-15.40.29/graph.dat",
                                                             2.5, 3.0);
 
     arma::mat energy = networkPotential->network(inputVector);
-    arma::mat derivative = networkPotential->backPropagation();
-    cout << energy(0,0) << " " << derivative << endl;
+    cout << energy << endl;
 
-    outFile.close();
+    //outFile.close();
     return true;
 }
 
