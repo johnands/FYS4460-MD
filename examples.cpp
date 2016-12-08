@@ -62,7 +62,7 @@ int Examples::lennardJonesFCC() {
     system->setMakeXYZ(false);
     system->setXYZName("LJFCC.xyz");
 
-    system->runSimulation();
+    return system->runSimulation();
 }
 
 
@@ -102,7 +102,7 @@ int Examples::lennardJonesFCCCellList() {
     system->setMakeXYZ(false);
     system->setXYZName("LJNeighbourFCC.xyz");
 
-    system->runSimulation();
+    return system->runSimulation();
 }
 
 
@@ -142,7 +142,7 @@ int Examples::lennardJonesFCCNeuralNetwork() {
     system->setMakeXYZ(false);
     system->setXYZName("LJNeighbourFCC.xyz");
 
-    system->runSimulation();
+    return system->runSimulation();
 
 }
 
@@ -166,7 +166,7 @@ int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat", 2.5, 3.0));
+    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/08.12-15.40.29/graph.dat", 2.5, 3.0));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
@@ -183,7 +183,7 @@ int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
     system->setMakeXYZ(false);
     system->setXYZName("LJNeighbourFCC.xyz");
 
-    system->runSimulation();
+    return system->runSimulation();
 
 }
 
@@ -208,7 +208,7 @@ int Examples::lennardJonesFCCTensorFlow() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new TensorFlowNetwork(system, graphFileName, 2.5, 3.0));
+    //system->setPotential(new TensorFlowNetwork(system, graphFileName, 2.5, 3.0));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
@@ -390,11 +390,13 @@ int Examples::lennardJonesFCCNanoSpheres() {
 
 int Examples::computeTemperatureFluctuations() {
 
+    return true;
 }
 
 
 int Examples::computeRadialDistributionFunction() {
 
+    return true;
 }
 
 
@@ -436,9 +438,9 @@ int Examples::compareManyNeighbourNeuralNetworkError() {
                                                             "../TensorFlow/TrainingData/06.12-14.19.29/graph.dat",
                                                             2.5, 3.0);
 
-    double energy = networkPotential->network(inputVector);
+    arma::mat energy = networkPotential->network(inputVector);
     arma::mat derivative = networkPotential->backPropagation();
-    cout << energy << " " << derivative << endl;
+    cout << energy(0,0) << " " << derivative << endl;
 
     outFile.close();
     return true;

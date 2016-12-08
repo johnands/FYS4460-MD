@@ -12,7 +12,7 @@ ManyNeighbourNN::ManyNeighbourNN(System *system, const char *filename,
 }
 
 
-double ManyNeighbourNN::network(arma::mat inputVector) {
+arma::mat ManyNeighbourNN::network(arma::mat inputVector) {
     // input vector is a 1xinputs vector
 
     // linear activation for input layer
@@ -32,7 +32,7 @@ double ManyNeighbourNN::network(arma::mat inputVector) {
     m_activations[m_nLayers+1] = m_preActivations[m_nLayers+1];
 
     // return activation of output neuron, which is a 1x1-matrix
-    return m_activations[m_nLayers+1](0,0);
+    return m_activations[m_nLayers+1];
 }
 
 
@@ -84,61 +84,63 @@ void ManyNeighbourNN::calculateForces() {
 
             Atom *atom2 = m_cellList->getNeighbours()[i][j];
 
-            // calculate distance vector
-            double dr[] = {atom1->position[0] - atom2->position[0],
-                           atom1->position[1] - atom2->position[1],
-                           atom1->position[2] - atom2->position[2]};
-
-            // make sure we're using shortest distance component-wise (periodic boundary conditions)
-            for (int dim=0; dim < 3; dim++) {
-                if      (dr[dim] > m_system->systemSizeHalf()[dim])  { dr[dim] -= m_system->systemSize()[dim]; }
-                else if (dr[dim] < -m_system->systemSizeHalf()[dim]) { dr[dim] += m_system->systemSize()[dim]; }
-            }
-
-            double dr2 = dr[0]*dr[0] + dr[1]*dr[1] + dr[2]*dr[2];
-
             // add the 20 first neighbours to input vector
             // regardless of cut etc.
             if (neighbourCount < m_numberOfNeighbours) {
-                double distance = sqrt(dr2);
-                distanceNeighbours(0, neighbourCount) = distance;
+
+                // calculate distance vector
+                double dr[] = {atom1->position[0] - atom2->position[0],
+                               atom1->position[1] - atom2->position[1],
+                               atom1->position[2] - atom2->position[2]};
+
+                // make sure we're using shortest distance component-wise (periodic boundary conditions)
+                for (int dim=0; dim < 3; dim++) {
+                    if      (dr[dim] > m_system->systemSizeHalf()[dim])  { dr[dim] -= m_system->systemSize()[dim]; }
+                    else if (dr[dim] < -m_system->systemSizeHalf()[dim]) { dr[dim] += m_system->systemSize()[dim]; }
+                }
+
+                // store components of distance vector for pressure calculation
                 drNeighbours[neighbourCount][0] = dr[0];
                 drNeighbours[neighbourCount][1] = dr[1];
                 drNeighbours[neighbourCount][2] = dr[2];
+
+                // calculate distance and add to vector
+                double dr2 = dr[0]*dr[0] + dr[1]*dr[1] + dr[2]*dr[2];
+                double distance = sqrt(dr2);
+                distanceNeighbours(0, neighbourCount) = distance;
                 neighbourCount++;
             }
+
             else {
-                // if not, zero force and energy
+                // do I need to do this?
                 vec3 forceOnAtom;
                 atom2->force += forceOnAtom;
             }
         }
 
-        // after making input vector, compute energy contribution from all neighbours
-        double energy = network(distanceNeighbours);
-        potentialEnergy += energy;
+        // after making input vector, compute total energy and force
+        arma::mat energyAndForce = network(distanceNeighbours);
+        potentialEnergy += energyAndForce(0,0);
 
-        // find dEdr for all neighbouring atoms
-        arma::mat dEdr = backPropagation();
+        vec3 forceOnAtom;
+        forceOnAtom[0] = energyAndForce(0,1);
+        forceOnAtom[1] = energyAndForce(0,2);
+        forceOnAtom[2] = energyAndForce(0,3);
+        atom1->force += forceOnAtom;
 
-        // loop through the atoms that has been sent through the network
-        // and calculate forces
+        //pressure += forceOnAtom[0]*drNeighbours[0] + forceOnAtom[1]*dr[1] + forceOnAtom[2]*dr[2];
+
+        /*// loop through the atoms that has been sent through the network
+        // to calculate pressure. Impossible just now...
         for (int k=0; k < m_numberOfNeighbours; k++) {
-
-            vec3 forceOnAtom;
-            double drInverse = 1.0 / distanceNeighbours(0,k);
-            forceOnAtom[0] = -dEdr(0,k)*drInverse*drNeighbours[k][0];
-            forceOnAtom[1] = -dEdr(0,k)*drInverse*drNeighbours[k][1];
-            forceOnAtom[2] = -dEdr(0,k)*drInverse*drNeighbours[k][2];
-            atom1->force += forceOnAtom;
 
             // dot product of Fij and dr
             pressure += forceOnAtom[0]*drNeighbours[k][0] +
                         forceOnAtom[1]*drNeighbours[k][1] +
                         forceOnAtom[2]*drNeighbours[k][2];
-        }
+        }*/
     }
+        m_potentialEnergy = potentialEnergy;
+        m_pressure = m_inverseVolume*pressure;
 
-    m_potentialEnergy = potentialEnergy;
-    m_pressure = m_inverseVolume*pressure;
 }

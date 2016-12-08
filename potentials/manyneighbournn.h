@@ -7,7 +7,7 @@ class ManyNeighbourNN : public NeuralNetwork {
 public:
     ManyNeighbourNN(System *system, const char *filename,
                     double rCut, double neighbourCut);
-    double network(arma::mat inputVector);
+    arma::mat network(arma::mat inputVector);
     arma::mat backPropagation();
     void calculateForces();
 };

@@ -65,8 +65,8 @@ HEADERS += \
     examples.h \
     potentials/manyneighbournn.h
 
-INCLUDEPATH += /home/johnands/QTensorFlow/include
-LIBS += -L/home/johnands/QTensorFlow/lib64 -ltensorflow
+#INCLUDEPATH += /home/johnands/QTensorFlow/include
+#LIBS += -L/home/johnands/QTensorFlow/lib64 -ltensorflow
 
 LIBS += -larmadillo -lblas -llapack
 

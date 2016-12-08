@@ -86,7 +86,6 @@ void NeuralNetwork::calculateForces() {
     }
 
     m_updateLists++;
-    cout << "yes" << endl;
 
     for (int i=0; i < m_system->atoms().size(); i++) {
         Atom *atom1 = m_system->atoms()[i];
@@ -156,11 +155,12 @@ void NeuralNetwork::readFromFile() {
 
     // process first line
     std::string activation;
-    input >> m_nLayers >> m_nNodes >> activation >> m_numberOfNeighbours;
+    input >> m_nLayers >> m_nNodes >> activation >> m_numberOfNeighbours >> m_numberOfOutputs;
     std::cout << "Layers: " << m_nLayers << std::endl;
     std::cout << "Nodes: " << m_nNodes << std::endl;
     std::cout << "Activation: " << activation << std::endl;
     std::cout << "Neighbours: " << m_numberOfNeighbours << std::endl;
+    std::cout << "Outputs: " << m_numberOfOutputs << std::endl;
 
     // set sizes
     m_preActivations.resize(m_nLayers+2);
@@ -224,14 +224,16 @@ void NeuralNetwork::readFromFile() {
     m_weights.resize(m_nLayers+1);
 
     // first hidden layer
-    m_weights[0]  = weightsTemp[0];
+    int currentRow = 0;
+    m_weights[0]  = weightsTemp[currentRow];
     for (int i=0; i < m_numberOfNeighbours-1; i++) {
         m_weights[0] = arma::join_cols(m_weights[0], weightsTemp[i+1]);
     }
 
     // following hidden layers
+    int currentRow = m_numberOfNeighbours;
     for (int i=0; i < m_nLayers-1; i++) {
-        int currentRow = i*m_nNodes + m_numberOfNeighbours;
+        currentRow = i*m_nNodes + m_numberOfNeighbours;
         m_weights[i+1] = weightsTemp[currentRow];
         for (int j=1; j < m_nNodes; j++) {
             m_weights[i+1] = arma::join_cols(m_weights[i+1], weightsTemp[currentRow+j]);
@@ -239,15 +241,18 @@ void NeuralNetwork::readFromFile() {
     }
 
     // output layer
-    // this is currently only valid for networks with one output
-    arma::mat outputLayer = weightsTemp.back();
-    m_weights[m_nLayers] = arma::reshape(outputLayer, m_nNodes, 1);
+    currentRow += m_nNodes;
+    arma::mat outputLayer = weightsTemp[currentRow];
+    for (int i=0; i < m_numberOfOutputs-1; i++) {
+        outputLayer = arma::join_cols(outputLayer, weightsTemp[currentRow+i]);
+    }
+    m_weights[m_nLayers] = arma::reshape(outputLayer, m_nNodes, m_numberOfOutputs);
 
     // reshape bias of output node
     m_biases[m_nLayers].shed_cols(1,m_nNodes-1);
 
-    m_weightsTransposed.resize(m_nLayers+1);
     // obtained transposed matrices
+    m_weightsTransposed.resize(m_nLayers+1);
     for (int i=0; i < m_weights.size(); i++)
         m_weightsTransposed[i] = m_weights[i].t();
 

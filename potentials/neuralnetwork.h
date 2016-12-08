@@ -35,6 +35,7 @@ protected:
     double m_neighbourCut = 0.0;
     double m_potentialCut = 0.0;
     int m_numberOfNeighbours = 0.0;
+    int m_numberOfOutputs = 0.0;
 };
 
 #endif // NEURALNETWORK_H
