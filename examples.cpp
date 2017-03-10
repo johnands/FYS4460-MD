@@ -45,7 +45,7 @@ int Examples::lennardJonesFCC() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new LennardJones(system, 1.0, 1.0));
+    system->setPotential(new LennardJones(system, 3.405, 1.0));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));

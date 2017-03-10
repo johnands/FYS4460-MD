@@ -34,7 +34,7 @@ int main() {
     cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K"             << endl;
     cout << "One unit of energy is "      << UnitConverter::energyToSI(1.0)      << " J"             << endl;
 
-    //return Examples::lennardJonesFCC();
+    return Examples::lennardJonesFCC();
     //return Examples::lennardJonesFCCCellList();
     //return Examples::lennardJonesFCCNeuralNetwork();
     //return Examples::lennardJonesFCCManyNeighbourNeuralNetwork();
@@ -55,14 +55,14 @@ int main() {
     exit(1);*/
 
 
-    arma::mat inputVector(2,3);
+    /*arma::mat inputVector(2,3);
     inputVector(0,0) = 2.0;
     inputVector(0,1) = 0.5;
     inputVector(0,2) = 1;
     inputVector.row(1) = inputVector.row(0);
     cout << inputVector << endl;
     double sumYes = 5 + arma::accu(inputVector);
-    cout << sumYes << endl;
+    cout << sumYes << endl;*/
 
     /*arma::mat no(1,0);
     cout << no*4 << endl;

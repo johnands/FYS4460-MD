@@ -9,7 +9,8 @@ LennardJones::LennardJones(System *system, double sigma, double epsilon) :
     Potential (system),
     m_sigma(sigma),
     m_epsilon(epsilon),
-    m_sigma6(pow(sigma, 6))
+    m_sigma6(pow(sigma, 6)),
+    m_sigma12(m_sigma6*m_sigma6)
 {
 
 }
@@ -56,7 +57,7 @@ void LennardJones::calculateForces()
             pressure += forceOnAtom.dot(dr);
 
             // calculate potential energy
-            potentialEnergy += (dr6 - 1)*dr6;
+            potentialEnergy += (m_sigma6*dr6 - 1)*dr6*m_sigma6;
         }
     }
 
