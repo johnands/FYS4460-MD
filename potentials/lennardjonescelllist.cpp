@@ -90,7 +90,7 @@ void LennardJonesCellList::calculateForces()
         }
         if (numberOfNeighbours > m_maxNeighbours) {
             m_maxNeighbours = numberOfNeighbours;
-            //std::cout << m_maxNeighbours << std::endl;
+            std::cout << m_maxNeighbours << std::endl;
         }
     }
 

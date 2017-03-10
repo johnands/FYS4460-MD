@@ -68,8 +68,8 @@ int Examples::lennardJonesFCC() {
 
 int Examples::lennardJonesFCCCellList() {
 
-    int numberOfUnitCells = 12;
-    double initialTemperature = 1.0;  // measured in Kelvin
+    int numberOfUnitCells = 10;
+    double initialTemperature = 2.5;  // measured in Kelvin
     double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
     double dt = 0.01;  // Measured in seconds
@@ -151,7 +151,7 @@ int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
 
     int numberOfUnitCells = 12;
     double initialTemperature = 1.0;  // measured in Kelvin
-    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.26);
+    double latticeConstant    = UnitConverter::lengthFromAngstroms(5.72);
     double mass = UnitConverter::massFromSI(6.63352088e-26); // mass of Argon atom
     double dt = 0.01;  // Measured in seconds
 
@@ -166,7 +166,7 @@ int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
                              mass, BoltzmannDist, maxMinVelocity);
     system->setPores(new CenteredCylinder(system, usePores));
 
-    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/08.12-15.40.29/graph.dat", 2.5, 3.0));
+    system->setPotential(new ManyNeighbourNN(system, "../TensorFlow/TrainingData/13.12-12.59.51/graph.dat", 2.5, 3.0));
     system->setTimeStep(dt);
     system->setIntegrator(new VelocityVerlet(system));
     system->setThermostat(new Berendsen(system, initialTemperature, tau));
@@ -183,7 +183,8 @@ int Examples::lennardJonesFCCManyNeighbourNeuralNetwork() {
     system->setMakeXYZ(false);
     system->setXYZName("LJNeighbourFCC.xyz");
 
-    return system->runSimulation();
+    cout << UnitConverter::currentUnits << endl;
+    //return system->runSimulation();
 
 }
 
@@ -449,10 +450,20 @@ int Examples::compareManyNeighbourNeuralNetworkError() {
 int Examples::testBackpropagation() {
 
     System *system = new System();
-    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
-    double energy = networkPotential->network(0.9);
+    //NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
+    ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system, "../TensorFlow/TrainingData/02.03-18.08.22/graph.dat", 2.5, 3.0);
+    std::ifstream infile;
+    infile.open("../TensorFlow/tmp/testBatch.txt");
+    arma::mat inputVector(1,48);
+    int i=0;
+    for ( std::string line; std::getline(infile, line); ) {
+        infile >> inputVector(0,i);
+        i++;
+    }
+    cout << inputVector << endl;
+    double energy = networkPotential->network2(inputVector);
     cout << energy << endl;
-    double derivative = networkPotential->backPropagation();
+    arma::mat derivative = networkPotential->backPropagation();
     cout << derivative << endl;
 
     return true;

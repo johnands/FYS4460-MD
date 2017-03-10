@@ -8,6 +8,7 @@ public:
     ManyNeighbourNN(System *system, const char *filename,
                     double rCut, double neighbourCut);
     arma::mat network(arma::mat inputVector);
+    double network2(arma::mat inputVector);
     arma::mat backPropagation();
     void calculateForces();
 };

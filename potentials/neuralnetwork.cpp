@@ -155,11 +155,11 @@ void NeuralNetwork::readFromFile() {
 
     // process first line
     std::string activation;
-    input >> m_nLayers >> m_nNodes >> activation >> m_numberOfNeighbours >> m_numberOfOutputs;
+    input >> m_nLayers >> m_nNodes >> activation >> m_numberOfInputs >> m_numberOfOutputs;
     std::cout << "Layers: " << m_nLayers << std::endl;
     std::cout << "Nodes: " << m_nNodes << std::endl;
     std::cout << "Activation: " << activation << std::endl;
-    std::cout << "Neighbours: " << m_numberOfNeighbours << std::endl;
+    std::cout << "Inputs: " << m_numberOfInputs << std::endl;
     std::cout << "Outputs: " << m_numberOfOutputs << std::endl;
 
     // set sizes
@@ -226,7 +226,7 @@ void NeuralNetwork::readFromFile() {
     // first hidden layer
     int currentRow = 0;
     m_weights[0]  = weightsTemp[currentRow];
-    for (int i=0; i < m_numberOfNeighbours-1; i++) {
+    for (int i=0; i < m_numberOfInputs-1; i++) {
         currentRow++;
         m_weights[0] = arma::join_cols(m_weights[0], weightsTemp[currentRow]);
     }
