@@ -451,9 +451,9 @@ int Examples::testBackpropagation() {
 
     System *system = new System();
     //NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
-    ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system, "../TensorFlow/TrainingData/02.03-18.08.22/graph.dat", 2.5, 3.0);
+    ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system, "../TensorFlow/TrainingData/22.03-15.06.05/graph.dat", 2.5, 3.0);
     std::ifstream infile;
-    infile.open("../TensorFlow/tmp/testBatch.txt");
+    infile.open("../TensorFlow/testForcesInput.txt");
     arma::mat inputVector(1,48);
     int i=0;
     for ( std::string line; std::getline(infile, line); ) {
