@@ -23,12 +23,12 @@ namespace ActivationFunctions {
         // the derivative of relu is 1 for positive numbers
         // and zero for negative numbers
 
-        for (int i=0; i < arma::size(matrix)[1]; i++) {
+        /*for (int i=0; i < arma::size(matrix)(1); i++) {
             if (matrix(0,i) > 0)
                 matrix(0,i) = 1;
             else
                 matrix(0,i) = 0;
-        }
+        }*/
     }
 
     arma::mat sigmoidDerivative(arma::mat matrix) {
