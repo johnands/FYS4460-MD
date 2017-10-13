@@ -40,7 +40,7 @@ int main() {
 
     //return Examples::lennardJonesFCC();
     //return Examples::lennardJonesFCCCellList();
-    return Examples::lennardJonesFCCNeuralNetwork();
+    //return Examples::lennardJonesFCCNeuralNetwork();
     //return Examples::lennardJonesFCCManyNeighbourNeuralNetwork();
     //return Examples::lennardJonesFCCTensorFlow();
     //return Examples::lennardJonesLiquid();
@@ -49,7 +49,7 @@ int main() {
     //return Examples::lennardJonesFCCNanoSpheres();
     //return Examples::computeTemperatureFluctuations();
     //return Examples::computeRadialDistributionFunction();
-    //return Examples::compareNeuralNetworkError();
+    return Examples::compareNeuralNetworkError();
     //return Examples::compareManyNeighbourNeuralNetworkError();
     //return Examples::testBackpropagation();
 }

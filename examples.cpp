@@ -406,17 +406,17 @@ int Examples::compareNeuralNetworkError() {
     System *system = new System();
 
     // check if error of NN has same shape as in python
-    int numberOfPoints = 1000;
+    int numberOfPoints = 2000;
     std::ofstream outFile;
-    //outFile.open("../TensorFlow/Tests/TrainLennardJones/errorLJC.dat");
-    arma::vec distances = arma::linspace<arma::vec>(0.8, 2.5, numberOfPoints);
-    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/28.11-17.40.35/graph.dat", 2.5, 3.0);
+    outFile.open("../TensorFlow/Tests/TrainLennardJones/energyAndDerivativeC.dat");
+    arma::vec distances = arma::linspace<arma::vec>(3.2, 8.5125, numberOfPoints);
+    NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/LJValidation/graph.dat", 2.5, 3.0);
     for (int i=0; i < numberOfPoints; i++) {
         double energy = networkPotential->network(distances(i));
         double derivative = networkPotential->backPropagation();
         outFile << energy << " " << derivative << endl;
     }
-    //outFile.close();
+    outFile.close();
     return true;
 }
 
@@ -450,7 +450,7 @@ int Examples::compareManyNeighbourNeuralNetworkError() {
 int Examples::testBackpropagation() {
 
     System *system = new System();
-    //NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/Tests/TrainLennardJones/exampleNN2hl.dat", 2.5, 3.0);
+    //NeuralNetwork *networkPotential = new NeuralNetwork(system, "../TensorFlow/TrainingData/LJValidation/graph.dat", 2.5, 3.0);
     ManyNeighbourNN *networkPotential = new ManyNeighbourNN(system, "../TensorFlow/TrainingData/22.03-15.06.05/graph.dat", 2.5, 3.0);
     std::ifstream infile;
     infile.open("../TensorFlow/testForcesInput.txt");
@@ -461,7 +461,7 @@ int Examples::testBackpropagation() {
         i++;
     }
     cout << inputVector << endl;
-    double energy = networkPotential->network2(inputVector);
+    arma::mat energy = networkPotential->network(inputVector);
     cout << energy << endl;
     arma::mat derivative = networkPotential->backPropagation();
     cout << derivative << endl;
